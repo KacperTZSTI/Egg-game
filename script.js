@@ -14,10 +14,16 @@ const input = new Input();
 let facing = "LEFT";
 let z = false;
 let d = 0;
-let p = "green";
+let p = false;
 let dmg = false;
 let flash = false;
 let score = 0;
+
+document.querySelector("#pallete").onclick = ()=>{
+  p = !p;
+  back.resource = p?res.images.back:res.images.back2;
+  bun.resource = p?res.images.bun:res.images.bun2;
+}
 
 const back = new Sprite({
   resource: res.images.back2,
@@ -208,6 +214,7 @@ function draw(){
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   back.drawImage(ctx, 0, 0);
   bun.drawImage(ctx, bunPos.x, bunPos.y);
+  document.querySelector("#score").innerText = `Score: ${score}`
   drawEggs();
   drawSaws();
 }
