@@ -11,6 +11,8 @@ export class Sprite {
       vFrames,
       frame,
       scale,
+      width,
+      height,
       position,
       animations,
     }) {
@@ -24,6 +26,8 @@ export class Sprite {
     this.frame = frame ?? 0;
     this.frameMap = new Map();
     this.scale = scale ?? 1;
+    this.width = width;
+    this.height = height;
     this.position = position ?? new Vector2(0,0);
     this.animations = animations ?? null;
     this.buildFrameMap();
