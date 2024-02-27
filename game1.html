@@ -4,23 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script defer type="module" src="script.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>jajca</title>
-    <style>
-        main{
-            display: flex; 
-            justify-content: center;
-            image-rendering: pixelated;
-        }
-        </style>
 </head>
 <body>
-    <main>
+    <main class="flex content-center" style="image-rendering: pixelated;">
 
         <canvas id="game" width="1000" height="800"></canvas>
     
 
-    <button id="pallete">Pallete swap</button>
+    <button id="pallete" class="p-4 bg-gray-200">Pallete swap</button>
     </main>
-    <h1 id="score">Score: 0</h1>
+    <h1 id="score" class="p-4 text-2xl">Score: 0</h1>
 </body>
 </html>

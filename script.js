@@ -19,10 +19,10 @@ let dmg = false;
 let flash = false;
 let score = 0;
 
-document.querySelector("#pallete").onclick = ()=>{
+document.querySelector("#pallete").onclick = () => {
   p = !p;
-  back.resource = p?res.images.back:res.images.back2;
-  bun.resource = p?res.images.bun:res.images.bun2;
+  back.resource = p ? res.images.back : res.images.back2;
+  bun.resource = p ? res.images.bun : res.images.bun2;
 }
 
 const back = new Sprite({
@@ -32,8 +32,8 @@ const back = new Sprite({
 )
 
 const bun = new Sprite({
-  resource: res.images.bun2 ,
-  frameSize: new Vector2(176,160),
+  resource: res.images.bun2,
+  frameSize: new Vector2(176, 160),
   hFrames: 13,
   vFrames: 2,
   frame: 0,
@@ -75,7 +75,7 @@ let bunPos = new Vector2(350, 640);
 document.addEventListener("keydown", (e) => {
   if (e.code === "KeyZ") {
     z = true;
-    d +=1;
+    d += 1;
   }
 })
 document.addEventListener("keyup", (e) => {
@@ -84,95 +84,103 @@ document.addEventListener("keyup", (e) => {
   }
 })
 
-function update(delta){
+function update(delta) {
   for (let i = 0; i < eggs.length; i++) {
     eggs[i].y += eggs[i].speed;
     eggs[i].speed += 0.1;
     if (
-      eggs[i].x >= bunPos.x - 60 && eggs[i].y >= bunPos.y -60 && eggs[i].x <= bunPos.x + 80 && eggs[i].y <= bunPos.y +100
-    ){
+      eggs[i].x >= bunPos.x - 60 && eggs[i].y >= bunPos.y - 60 && eggs[i].x <= bunPos.x + 80 && eggs[i].y <= bunPos.y + 100
+    ) {
       console.log("eggscop")
       eggs.splice(i, 1);
       flash = true;
       score += 1;
-  }
+    }
   }
   for (let i = 0; i < saws.length; i++) {
     saws[i].y += saws[i].speed;
     saws[i].speed += 0.1;
     if (
-      saws[i].x >= bunPos.x - 60 && saws[i].y >= bunPos.y -60 && saws[i].x <= bunPos.x + 80 && saws[i].y <= bunPos.y +100
-    ){
+      saws[i].x >= bunPos.x - 60 && saws[i].y >= bunPos.y - 60 && saws[i].x <= bunPos.x + 80 && saws[i].y <= bunPos.y + 100
+    ) {
       console.log("dmg")
       saws.splice(i, 1);
       dmg = true;
       score -= 5;
+    }
+    else if(saws[i].y>800 && saws[i].bounced){
+      saws.splice(i, 1);
+    }
+    else if(saws[i].y>800 && !saws[i].bounced){
+      saws[i].speed = -10;
+      saws[i].bounced = true;
+      saws[i].y = 799;
+    }
   }
+  if (!input.direction) {
+    if (facing == "LEFT") { bun.animations.play("idle_l") }
+    if (facing == "RIGHT") { bun.animations.play("idle_r") }
   }
-  if(!input.direction){
-    if(facing == "LEFT"){bun.animations.play("idle_l")}
-    if(facing == "RIGHT"){bun.animations.play("idle_r")}
-  }
-  if(z == false && d == 0){
-    if (input.direction == "LEFT"){
-      bunPos.x -=4;
+  if (z == false && d == 0) {
+    if (input.direction == "LEFT") {
+      bunPos.x -= 4;
       bun.animations.play("move_l");
     }
-    if (input.direction == "RIGHT"){
-      bunPos.x +=4;
+    if (input.direction == "RIGHT") {
+      bunPos.x += 4;
       bun.animations.play("move_r");
     }
   }
-  if(z == true){
-    if (input.direction == "LEFT"){
-      bunPos.x -=1;
+  if (z == true) {
+    if (input.direction == "LEFT") {
+      bunPos.x -= 1;
       bun.animations.play("charge_l");
     }
-    if (input.direction == "RIGHT"){
-      bunPos.x +=1;
+    if (input.direction == "RIGHT") {
+      bunPos.x += 1;
       bun.animations.play("charge_r");
     }
   }
-  if(z == false && d > 0){
-    if (input.direction == "LEFT"){
-      bunPos.x -=9;
+  if (z == false && d > 0) {
+    if (input.direction == "LEFT") {
+      bunPos.x -= 9;
       bun.animations.play("dash_l1");
-      d-=1;
+      d -= 1;
     }
-    if (input.direction == "RIGHT"){
-      bunPos.x +=9;
+    if (input.direction == "RIGHT") {
+      bunPos.x += 9;
       bun.animations.play("dash_r1");
-      d-=1;
+      d -= 1;
     }
   }
-  if(flash == true){
-    if(!input.direction){
-      if(facing == "LEFT"){bun.animations.play("flash1")}
-      if(facing == "RIGHT"){bun.animations.play("flash2")}
+  if (flash == true) {
+    if (!input.direction) {
+      if (facing == "LEFT") { bun.animations.play("flash1") }
+      if (facing == "RIGHT") { bun.animations.play("flash2") }
     }
-    if (input.direction == "LEFT"){
-      bunPos.x -=0;
+    if (input.direction == "LEFT") {
+      bunPos.x -= 0;
       bun.animations.play("flash1");
     }
-    if (input.direction == "RIGHT"){
-      bunPos.x +=0;
+    if (input.direction == "RIGHT") {
+      bunPos.x += 0;
       bun.animations.play("flash2");
     }
     setTimeout(() => {
       flash = false;
     }, 130);
   }
-  if(dmg == true){
-    if(!input.direction){
-      if(facing == "LEFT"){bun.animations.play("flash1")}
-      if(facing == "RIGHT"){bun.animations.play("flash2")}
+  if (dmg == true) {
+    if (!input.direction) {
+      if (facing == "LEFT") { bun.animations.play("flash1") }
+      if (facing == "RIGHT") { bun.animations.play("flash2") }
     }
-    if (input.direction == "LEFT"){
-      bunPos.x +=1;
+    if (input.direction == "LEFT") {
+      bunPos.x += 1;
       bun.animations.play("flash1");
     }
-    if (input.direction == "RIGHT"){
-      bunPos.x -=1;
+    if (input.direction == "RIGHT") {
+      bunPos.x -= 1;
       bun.animations.play("flash2");
     }
     setTimeout(() => {
@@ -210,7 +218,7 @@ function drawSaws() {
   }
 }
 
-function draw(){
+function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   back.drawImage(ctx, 0, 0);
   bun.drawImage(ctx, bunPos.x, bunPos.y);
@@ -223,7 +231,8 @@ setInterval(() => {
   saws.push({
     x: Math.random() * (canvas.width - 20) + 10,
     y: 50,
-    speed: -3
+    speed: -3,
+    bounced: (Math.random()>0.6)
   });
 }, 1000);
 
