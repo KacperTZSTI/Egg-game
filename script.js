@@ -62,18 +62,6 @@ const eg = new Sprite({
 }
 )
 
-const saw = new Sprite({
-  resource: res.images.saw,
-  frameSize: new Vector2(75, 500),
-  hFrames: 8,
-  vFrames: 1,
-  frame: 0,
-  animations: new Animations({
-    spin: new FrameIndexPattern(SAW),
-  })
-}
-)
-
 let bunPos = new Vector2(350, RESOLUTION.y -bun.height);
 
 document.addEventListener("keydown", (e) => {
@@ -196,7 +184,6 @@ function update(delta) {
   }
   facing = input.direction ?? facing;
   bun.step(delta);
-  saw.step(delta);
 }
 
 //eggs
