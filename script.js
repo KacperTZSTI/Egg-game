@@ -66,7 +66,7 @@ const saw = new Sprite({
   resource: res.images.saw,
   frameSize: new Vector2(75, 500),
   hFrames: 8,
-  vFrames: 0,
+  vFrames: 1,
   frame: 0,
   animations: new Animations({
     spin: new FrameIndexPattern(SAW),
@@ -92,6 +92,7 @@ function update(delta) {
   for (let i = 0; i < eggs.length; i++) {
     eggs[i].y += eggs[i].speed;
     eggs[i].speed += 0.1;
+    
     if (
       eggs[i].x >= bunPos.x - 60 && eggs[i].y >= bunPos.y - 60 && eggs[i].x <= bunPos.x + 80 && eggs[i].y <= bunPos.y + 100
     ) {
@@ -195,7 +196,7 @@ function update(delta) {
   }
   facing = input.direction ?? facing;
   bun.step(delta);
-
+  saw.step(delta);
 }
 
 //eggs
@@ -239,7 +240,7 @@ setInterval(() => {
     frameSize: new Vector2(75, 500),
     hFrames: 8,
     position: new Vector2(Math.random() * (canvas.width - 20) + 10, 50),
-    vFrames: 0,
+    vFrames: 1,
     frame: 0,
     animations: new Animations({
       spin: new FrameIndexPattern(SAW),
