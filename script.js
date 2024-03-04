@@ -70,7 +70,6 @@ let bunPos = new Vector2(350, RESOLUTION.y -bun.height);
 document.addEventListener("keydown", (e) => {
   if (e.code === "KeyZ") {
     z = true;
-    d += 2;
   }
 })
 document.addEventListener("keyup", (e) => {
@@ -90,6 +89,7 @@ document.addEventListener("keyup", (e) => {
 })
 
 function update(delta) {
+  if(!z && !input.heldDirections.length)d = 0;
   for (let i = 0; i < eggs.length; i++) {
     eggs[i].y += eggs[i].speed;
     eggs[i].speed += 0.1;
@@ -140,6 +140,7 @@ function update(delta) {
     }
   }
   if (z == true) {
+    d += 2;
     if (input.direction == "LEFT") {
       bunPos.x -= 1;
       bun.animations.play("charge_l");
