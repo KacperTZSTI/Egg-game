@@ -120,9 +120,9 @@ const makeStandingFrames = (rootFrame = 0) => {
       ]
     }
   }
-  const makeSawFrames = (rootFrame=0) => {
+  const makeDuckFrames = (rootFrame=0) => {
     return {
-      duration: 900,
+      duration: 200,
       frames: [
         {
           time: 0,
@@ -131,33 +131,60 @@ const makeStandingFrames = (rootFrame = 0) => {
         {
           time: 100,
           frame: rootFrame+1
+        }
+      ]
+    }
+  }
+  const makeSawFrames = (rootFrame=0) => {
+    return {
+      duration: 650,
+      frames: [
+        {
+          time: 0,
+          frame: rootFrame
+        },
+        {
+          time: 50,
+          frame: rootFrame+1
+        },
+        {
+          time: 100,
+          frame: rootFrame+2
+        },
+        {
+          time: 150,
+          frame: rootFrame
         },
         {
           time: 200,
+          frame: rootFrame+1
+        },
+        {
+          time: 250,
           frame: rootFrame+2
         },
         {
           time: 300,
-          frame: rootFrame
-        },
-        {
-          time: 400,
-          frame: rootFrame+1
-        },
-        {
-          time: 500,
-          frame: rootFrame+2
-        },
-        {
-          time: 600,
           frame: rootFrame+3
         },
         {
-          time: 700,
+          time: 350,
           frame: rootFrame+4
         },
         {
-          time: 800,
+          time: 400,
+          frame: rootFrame+5
+        },
+        {
+          time: 450,
+          frame: rootFrame+3
+        },
+        {
+          time: 550,
+          frame: rootFrame+4
+        },
+        {
+          time: 600,
           frame: rootFrame+5
         },
       ]
@@ -185,4 +212,5 @@ const makeStandingFrames = (rootFrame = 0) => {
   export const DMG2 = makeEggscopFrames(15);
 
   export const SAW = makeSawFrames(0);
-  
+  export const DUCK1 = makeDuckFrames(2);
+  export const DUCK2 = makeDuckFrames(15);

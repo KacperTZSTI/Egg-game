@@ -5,7 +5,7 @@ import { GameLoop } from "./gameLoop.js";
 import { Input } from "./input.js";
 import { Animations } from "./animation_player.js";
 import { FrameIndexPattern } from "./pattern.js";
-import { CHARGE_LEFT, CHARGE_RIGHT, COUGHT1, COUGHT2, DASH_LEFT1, DASH_LEFT2, DASH_RIGHT1, DASH_RIGHT2, SAW, STAND_LEFT, STAND_RIGHT, WALK_LEFT, WALK_RIGHT } from "./animation.js";
+import { CHARGE_LEFT, CHARGE_RIGHT, COUGHT1, COUGHT2, DASH_LEFT1, DASH_LEFT2, DASH_RIGHT1, DASH_RIGHT2, DUCK1, DUCK2, SAW, STAND_LEFT, STAND_RIGHT, WALK_LEFT, WALK_RIGHT } from "./animation.js";
 
 
 const canvas = document.getElementById("game");
@@ -19,6 +19,7 @@ let dmg = false;
 let flash = false;
 let score = 0;
 const RESOLUTION = new Vector2(1200, 700)
+let duck = false;
 
 document.querySelector("#pallete").onclick = () => {
   p = !p;
@@ -53,6 +54,8 @@ const bun = new Sprite({
     dash_r2: new FrameIndexPattern(DASH_RIGHT2),
     flash1: new FrameIndexPattern(COUGHT1),
     flash2: new FrameIndexPattern(COUGHT2),
+    duck1: new FrameIndexPattern(DUCK1),
+    duck2: new FrameIndexPattern(DUCK2),
   })
 })
 
@@ -67,12 +70,22 @@ let bunPos = new Vector2(350, RESOLUTION.y -bun.height);
 document.addEventListener("keydown", (e) => {
   if (e.code === "KeyZ") {
     z = true;
-    d += 1;
+    d += 2;
   }
 })
 document.addEventListener("keyup", (e) => {
   if (e.code === "KeyZ") {
     z = false;
+  }
+})
+document.addEventListener("keydown", (e) => {
+  if(e.code === "ArrowDown"){
+    duck = true;
+  }
+})
+document.addEventListener("keyup", (e) => {
+  if (e.code === "ArrowDown") {
+    duck = false;
   }
 })
 
@@ -92,7 +105,7 @@ function update(delta) {
   }
   for (let i = 0; i < saws.length; i++) {
     saws[i].position.y += saws[i].speed;
-    saws[i].speed += 0.1;
+    saws[i].speed += 0.15;
     saws[i].animations.play("spin");
     saws[i].step(delta);
     if (
@@ -183,8 +196,26 @@ function update(delta) {
     }, 400);
   }
   facing = input.direction ?? facing;
+
+  if (duck == true) {
+    if (!input.direction) {
+      if (facing == "LEFT") { bun.animations.play("duck1") }
+      if (facing == "RIGHT") { bun.animations.play("duck2") }
+    }
+    if (input.direction == "LEFT") {
+      bunPos.x += 1;
+      bun.animations.play("duck1");
+    }
+    if (input.direction == "RIGHT") {
+      bunPos.x -= 1;
+      bun.animations.play("duck2");
+    }
+  }
+  facing = input.direction ?? facing;
   bun.step(delta);
 }
+
+
 
 //eggs
 let eggs = [];
@@ -238,7 +269,7 @@ setInterval(() => {
   new_saw.bounced= (Math.random()>0.6)
 new_saw.animations.play("spin")
   saws.push(new_saw);
-}, 1000);
+}, 1400);
 
 const gameLoop = new GameLoop(update, draw);
 gameLoop.start();
