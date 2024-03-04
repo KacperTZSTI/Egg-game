@@ -2,7 +2,7 @@ import { res } from "./res.js";
 import { Sprite } from "./sprite.js";
 import { Vector2 } from "./Vector2.js";
 import { GameLoop } from "./gameLoop.js";
-import { Input, LEFT } from "./input.js";
+import { Input } from "./input.js";
 import { Animations } from "./animation_player.js";
 import { FrameIndexPattern } from "./pattern.js";
 import { CHARGE_LEFT, CHARGE_RIGHT, COUGHT1, COUGHT2, DASH_LEFT1, DASH_LEFT2, DASH_RIGHT1, DASH_RIGHT2, SAW, STAND_LEFT, STAND_RIGHT, WALK_LEFT, WALK_RIGHT } from "./animation.js";
@@ -18,6 +18,7 @@ let p = false;
 let dmg = false;
 let flash = false;
 let score = 0;
+const RESOLUTION = new Vector2(1200, 700)
 
 document.querySelector("#pallete").onclick = () => {
   p = !p;
@@ -61,16 +62,7 @@ const eg = new Sprite({
 }
 )
 
-const saw = new Sprite({
-  resource: res.images.saw,
-  frameSize: new Vector2(75, 500),
-  animations: new Animations({
-    spin: new FrameIndexPattern(SAW),
-  })
-}
-)
-
-let bunPos = new Vector2(350, 640);
+let bunPos = new Vector2(350, RESOLUTION.y -bun.height);
 
 document.addEventListener("keydown", (e) => {
   if (e.code === "KeyZ") {
@@ -88,6 +80,7 @@ function update(delta) {
   for (let i = 0; i < eggs.length; i++) {
     eggs[i].y += eggs[i].speed;
     eggs[i].speed += 0.1;
+    
     if (
       eggs[i].x >= bunPos.x - 60 && eggs[i].y >= bunPos.y - 60 && eggs[i].x <= bunPos.x + 80 && eggs[i].y <= bunPos.y + 100
     ) {
@@ -98,23 +91,25 @@ function update(delta) {
     }
   }
   for (let i = 0; i < saws.length; i++) {
-    saws[i].y += saws[i].speed;
+    saws[i].position.y += saws[i].speed;
     saws[i].speed += 0.1;
+    saws[i].animations.play("spin");
+    saws[i].step(delta);
     if (
-      saws[i].x >= bunPos.x - 60 && saws[i].y >= bunPos.y - 60 && saws[i].x <= bunPos.x + 80 && saws[i].y <= bunPos.y + 100
+      saws[i].position.x >= bunPos.x - 60 && saws[i].position.y >= bunPos.y - 60 && saws[i].position.x <= bunPos.x + 80 && saws[i].position.y <= bunPos.y + 100
     ) {
       console.log("dmg")
       saws.splice(i, 1);
       dmg = true;
       score -= 5;
     }
-    else if(saws[i].y>800 && saws[i].bounced){
+    else if(saws[i].position.y>RESOLUTION.y && saws[i].bounced){
       saws.splice(i, 1);
     }
-    else if(saws[i].y>800 && !saws[i].bounced){
+    else if(saws[i].position.y>RESOLUTION.y && !saws[i].bounced){
       saws[i].speed = -10;
       saws[i].bounced = true;
-      saws[i].y = 799;
+      saws[i].position.y = RESOLUTION.y - 1;
     }
   }
   if (!input.direction) {
@@ -189,7 +184,6 @@ function update(delta) {
   }
   facing = input.direction ?? facing;
   bun.step(delta);
-
 }
 
 //eggs
@@ -214,7 +208,7 @@ let saws = [];
 
 function drawSaws() {
   for (let i = 0; i < saws.length; i++) {
-    saw.drawImage(ctx, saws[i].x, saws[i].y);
+    saws[i].drawImage(ctx, saws[i].position.x, saws[i].position.y);
   }
 }
 
@@ -228,12 +222,22 @@ function draw() {
 }
 
 setInterval(() => {
-  saws.push({
-    x: Math.random() * (canvas.width - 20) + 10,
-    y: 50,
-    speed: -3,
-    bounced: (Math.random()>0.6)
-  });
+  let new_saw = new Sprite({
+    resource: res.images.saw,
+    frameSize: new Vector2(75, 500),
+    hFrames: 8,
+    position: new Vector2(Math.random() * (canvas.width - 20) + 10, 50),
+    vFrames: 1,
+    frame: 0,
+    animations: new Animations({
+      spin: new FrameIndexPattern(SAW),
+    })
+  }
+  )
+  new_saw.speed = -3;
+  new_saw.bounced= (Math.random()>0.6)
+new_saw.animations.play("spin")
+  saws.push(new_saw);
 }, 1000);
 
 const gameLoop = new GameLoop(update, draw);

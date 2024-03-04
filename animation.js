@@ -122,42 +122,42 @@ const makeStandingFrames = (rootFrame = 0) => {
   }
   const makeSawFrames = (rootFrame=0) => {
     return {
-      duration: 160,
+      duration: 900,
       frames: [
         {
           time: 0,
           frame: rootFrame
         },
         {
-          time: 20,
+          time: 100,
           frame: rootFrame+1
         },
         {
-          time: 20,
+          time: 200,
           frame: rootFrame+2
         },
         {
-          time: 20,
+          time: 300,
           frame: rootFrame
         },
         {
-          time: 20,
+          time: 400,
           frame: rootFrame+1
         },
         {
-          time: 20,
+          time: 500,
           frame: rootFrame+2
         },
         {
-          time: 20,
+          time: 600,
           frame: rootFrame+3
         },
         {
-          time: 20,
+          time: 700,
           frame: rootFrame+4
         },
         {
-          time: 20,
+          time: 800,
           frame: rootFrame+5
         },
       ]
