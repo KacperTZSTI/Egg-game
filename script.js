@@ -7,6 +7,7 @@ import { Animations } from "./animation_player.js";
 import { FrameIndexPattern } from "./pattern.js";
 import { CHARGE_LEFT, CHARGE_RIGHT, COUGHT1, COUGHT2, DASH_LEFT1, DASH_LEFT2, DASH_RIGHT1, DASH_RIGHT2, DUCK1, DUCK2, SAW, STAND_LEFT, STAND_RIGHT, WALK_LEFT, WALK_RIGHT } from "./animation.js";
 
+const d_over_dx = 0.00019245008973;
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -18,6 +19,7 @@ let p = false;
 let dmg = false;
 let flash = false;
 let score = 0;
+let timer = 0;
 const RESOLUTION = new Vector2(1200, 700)
 let duck = false;
 
@@ -65,7 +67,7 @@ const eg = new Sprite({
 }
 )
 
-let bunPos = new Vector2(350, RESOLUTION.y -bun.height);
+let bunPos = new Vector2(350, RESOLUTION.y - bun.height);
 
 document.addEventListener("keydown", (e) => {
   if (e.code === "KeyZ") {
@@ -78,7 +80,7 @@ document.addEventListener("keyup", (e) => {
   }
 })
 document.addEventListener("keydown", (e) => {
-  if(e.code === "ArrowDown"){
+  if (e.code === "ArrowDown") {
     duck = true;
   }
 })
@@ -89,15 +91,14 @@ document.addEventListener("keyup", (e) => {
 })
 
 function update(delta) {
-  if(!z && !input.heldDirections.length)d = 0;
+  if (!z && !input.heldDirections.length) d = 0;
   for (let i = 0; i < eggs.length; i++) {
     eggs[i].y += eggs[i].speed;
     eggs[i].speed += 0.1;
-    
+
     if (
       eggs[i].x >= bunPos.x - 60 && eggs[i].y >= bunPos.y - 60 && eggs[i].x <= bunPos.x + 80 && eggs[i].y <= bunPos.y + 100
     ) {
-      console.log("eggscop")
       eggs.splice(i, 1);
       flash = true;
       score += 1;
@@ -111,15 +112,14 @@ function update(delta) {
     if (
       saws[i].position.x >= bunPos.x - 60 && saws[i].position.y >= bunPos.y - 60 && saws[i].position.x <= bunPos.x + 80 && saws[i].position.y <= bunPos.y + 100
     ) {
-      console.log("dmg")
       saws.splice(i, 1);
       dmg = true;
-      score -= 5;
+      score -= 3;
     }
-    else if(saws[i].position.y>RESOLUTION.y && saws[i].bounced){
+    else if (saws[i].position.y > RESOLUTION.y && saws[i].bounced) {
       saws.splice(i, 1);
     }
-    else if(saws[i].position.y>RESOLUTION.y && !saws[i].bounced){
+    else if (saws[i].position.y > RESOLUTION.y && !saws[i].bounced) {
       saws[i].speed = -10;
       saws[i].bounced = true;
       saws[i].position.y = RESOLUTION.y - 1;
@@ -162,6 +162,8 @@ function update(delta) {
       d -= 1;
     }
   }
+  if (bunPos.x < -120) bunPos.x = RESOLUTION.x;
+  if (bunPos.x > RESOLUTION.x) bunPos.x = -120;
   if (flash == true) {
     if (!input.direction) {
       if (facing == "LEFT") { bun.animations.play("flash1") }
@@ -233,7 +235,7 @@ setInterval(() => {
     y: 50,
     speed: -4
   });
-}, 1000);
+}, 800);
 
 //saws
 let saws = [];
@@ -254,6 +256,8 @@ function draw() {
 }
 
 setInterval(() => {
+  let chance = (d_over_dx * ((timer) ** 2))/3
+  if (Math.random() > chance) return;
   let new_saw = new Sprite({
     resource: res.images.saw,
     frameSize: new Vector2(75, 500),
@@ -266,11 +270,16 @@ setInterval(() => {
     })
   }
   )
-  new_saw.speed = -3;
-  new_saw.bounced= (Math.random()>0.6)
-new_saw.animations.play("spin")
+  new_saw.speed = -5;
+  new_saw.bounced = (Math.random() > 0.6)
+  new_saw.animations.play("spin")
   saws.push(new_saw);
-}, 1400);
+}, 50);
+
+setInterval(() => {
+  timer += 1;
+  document.querySelector("#timer").innerText = `Timer: ${timer}`
+}, 1000)
 
 const gameLoop = new GameLoop(update, draw);
 gameLoop.start();
