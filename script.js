@@ -19,9 +19,26 @@ let p = false;
 let dmg = false;
 let flash = false;
 let score = 0;
+let hiscore = window.localStorage.getItem("hiscore")??0;
+document.querySelector("#hiscore").innerText = `High score: ${hiscore}`
+
 let timer = 0;
 const RESOLUTION = new Vector2(1200, 700)
 let duck = false;
+
+function saveHiscore(){
+  if(timer>hiscore){
+    hiscore = timer;
+    window.localStorage.setItem("hiscore", timer)
+    document.querySelector("#hiscore").innerText = `High score: ${hiscore}`
+  }
+  if(score<0){
+    alert(`skill issue\nyou only survived ${timer} seconds.\n\npathetic.`)
+    score = 1;
+    window.location.assign("/")
+  }
+  
+}
 
 document.querySelector("#pallete").onclick = () => {
   p = !p;
@@ -114,6 +131,7 @@ function update(delta) {
     ) {
       saws.splice(i, 1);
       dmg = true;
+      saveHiscore();
       score -= 3;
     }
     else if (saws[i].position.y > RESOLUTION.y && saws[i].bounced) {
@@ -250,13 +268,13 @@ function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   back.drawImage(ctx, 0, 0);
   bun.drawImage(ctx, bunPos.x, bunPos.y);
-  document.querySelector("#score").innerText = `Score: ${score}`
+  document.querySelector("#score").innerText = `Eggs: ${score}`
   drawEggs();
   drawSaws();
 }
 
 setInterval(() => {
-  let chance = (d_over_dx * ((timer) ** 2))/3
+  let chance = (d_over_dx * ((timer) ** 2))/5
   if (Math.random() > chance) return;
   let new_saw = new Sprite({
     resource: res.images.saw,
@@ -278,6 +296,7 @@ setInterval(() => {
 
 setInterval(() => {
   timer += 1;
+  saveHiscore()
   document.querySelector("#timer").innerText = `Timer: ${timer}`
 }, 1000)
 

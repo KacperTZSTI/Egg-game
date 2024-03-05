@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.onload = ()=>{
+
+            document.querySelector("#hiscore").innerHTML = `High score: ${window.localStorage.getItem("hiscore")??0}`;
+        }
+    </script>
     <title>Idex</title>
 </head>
 <body class="p-16 flex flex-col items-center gap-4">
@@ -13,6 +19,9 @@
 INSTRUCTIONS
 Hold &lt;Z&gt; to dash
 Use arrows to move
+
+Current objective: SURVIVE
     </pre>
+    <h1 class="text-2xl" id="hiscore">You need JavaScript enabled for this game to work.</h1>
 </body>
 </html>
