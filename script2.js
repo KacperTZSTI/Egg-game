@@ -22,7 +22,7 @@ let score2 = 0;
 let hiscore2 = window.localStorage.getItem("hiscore2")??0;
 document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
 
-let timer2 = 10;
+let timer2 = 100;
 const RESOLUTION = new Vector2(1200, 700)
 let duck = false;
 
@@ -273,7 +273,7 @@ function draw() {
 } 
 
 setInterval(() => {
-  let chance = (d_over_dx * ((timer2) ** 2))/5
+  let chance = (d_over_dx * ((100-timer2) ** 2))/10
   if (Math.random() > chance) return;
   let new_saw = new Sprite({
     resource: res.images.saw,
