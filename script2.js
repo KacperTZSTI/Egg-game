@@ -5,6 +5,7 @@ import { GameLoop } from "./gameLoop.js";
 import { Input } from "./input.js";
 import { Animations } from "./animation_player.js";
 import { FrameIndexPattern } from "./pattern.js";
+import { sfx } from "./sfx.js";
 import { CHARGE_LEFT, CHARGE_RIGHT, COUGHT1, COUGHT2, DASH_LEFT1, DASH_LEFT2, DASH_RIGHT1, DASH_RIGHT2, DUCK1, DUCK2, SAW, STAND_LEFT, STAND_RIGHT, WALK_LEFT, WALK_RIGHT } from "./animation.js";
 
 const d_over_dx = 0.00019245008973;
@@ -17,6 +18,7 @@ let z = false;
 let d = 0;
 let p = false;
 let dmg = false;
+let sfx_r = 99;
 let flash = false;
 let score2 = 0;
 let hiscore2 = window.localStorage.getItem("hiscore2")??0;
@@ -26,6 +28,8 @@ let timer2 = 100;
 const RESOLUTION = new Vector2(1200, 700)
 let duck = false;
 
+sfx.load.play();
+
 function saveHiscore(){
   if(score2>hiscore2){
     hiscore2 = score2;
@@ -33,6 +37,7 @@ function saveHiscore(){
     document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
   }
   if(timer2<0){
+    sfx.loss.play();
     alert(`Congratulations\nyou collected ${score2} eggs.\n\n...`)
     window.location.assign("/index2.html")
   }
@@ -115,6 +120,7 @@ function update(delta) {
     if (
       eggs[i].x >= bunPos.x - 60 && eggs[i].y >= bunPos.y - 60 && eggs[i].x <= bunPos.x + 80 && eggs[i].y <= bunPos.y + 100
     ) {
+      sfx.egg.play();
       eggs.splice(i, 1);
       flash = true;
       score2 += 1;
@@ -128,6 +134,19 @@ function update(delta) {
     if (
       saws[i].position.x >= bunPos.x - 60 && saws[i].position.y >= bunPos.y - 60 && saws[i].position.x <= bunPos.x + 80 && saws[i].position.y <= bunPos.y + 100
     ) {
+      sfx_r = Math.random()
+      if(sfx_r < 0.25){
+        sfx.saw1.play();
+      }
+      if(sfx_r > 0.25 && sfx_r < 0.5){
+        sfx.saw2.play();
+      }
+      if(sfx_r > 0.5 && sfx_r < 0.75){
+        sfx.saw3.play();
+      }
+      if(sfx_r > 0.75){
+        sfx.saw4.play();
+      }
       saws.splice(i, 1);
       dmg = true;
       saveHiscore();
@@ -137,6 +156,12 @@ function update(delta) {
       saws.splice(i, 1);
     }
     else if (saws[i].position.y > RESOLUTION.y && !saws[i].bounced) {
+      let sfx_b = Math.random();
+      if(sfx_b > 0.90){
+        sfx.funi.play();
+      }else{
+        sfx.bounce.play();
+      }
       saws[i].speed = -10;
       saws[i].bounced = true;
       saws[i].position.y = RESOLUTION.y - 1;
@@ -157,6 +182,7 @@ function update(delta) {
     }
   }
   if (z == true) {
+        // sfx.egg.play();
     d += 2;
     if (input.direction == "LEFT") {
       bunPos.x -= 1;
