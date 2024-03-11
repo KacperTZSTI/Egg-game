@@ -6,7 +6,8 @@ class Res {
         eg: "/sprites/eg1.png",
         saw: "/sprites/saw.png",
         back2: "/sprites/back2.png",
-        bun2: "/sprites/bnuyy2.png"
+        bun2: "/sprites/bnuyy2.png",
+        black: "/sprites/black.png"
       };
   
       this.images = {};

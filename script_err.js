@@ -32,21 +32,19 @@ function saveHiscore(){
     window.localStorage.setItem("hiscore2", score2)
     document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
   }
-  if(timer2<0){
-    alert(`Congratulations\nyou collected ${score2} eggs.\n\n...`)
-    window.location.assign("/error.html")
+  if(score2>0){
+    alert(`Congratulations\nyou collected ${score2} eggs.\n\ndon't leave me here`)
+    window.location.assign("/index.html")
   }
   
 }
 
 document.querySelector("#pallete").onclick = () => {
-  p = !p;
-  back.resource = p ? res.images.back : res.images.back2;
-  bun.resource = p ? res.images.bun : res.images.bun2;
+  window.location.assign("https://www.onet.pl/")
 }
 
 const back = new Sprite({
-  resource: res.images.back2,
+  resource: res.images.black,
   frameSize: new Vector2(1800, 1700)
 }
 )
@@ -122,7 +120,7 @@ function update(delta) {
   }
   for (let i = 0; i < saws.length; i++) {
     saws[i].position.y += saws[i].speed;
-    saws[i].speed += 0.15;
+    saws[i].speed += 0.001;
     saws[i].animations.play("spin");
     saws[i].step(delta);
     if (
@@ -148,33 +146,33 @@ function update(delta) {
   }
   if (z == false && d == 0) {
     if (input.direction == "LEFT") {
-      bunPos.x -= 16;
+      bunPos.x -= 5;
       bun.animations.play("move_l");
     }
     if (input.direction == "RIGHT") {
-      bunPos.x += 16;
+      bunPos.x += 5;
       bun.animations.play("move_r");
     }
   }
   if (z == true) {
     d += 2;
     if (input.direction == "LEFT") {
-      bunPos.x -= 1;
+      bunPos.x -= 0;
       bun.animations.play("charge_l");
     }
     if (input.direction == "RIGHT") {
-      bunPos.x += 1;
+      bunPos.x += 0;
       bun.animations.play("charge_r");
     }
   }
   if (z == false && d > 0) {
     if (input.direction == "LEFT") {
-      bunPos.x -= 10;
+      bunPos.x -= 1;
       bun.animations.play("dash_l1");
       d -= 1;
     }
     if (input.direction == "RIGHT") {
-      bunPos.x += 10;
+      bunPos.x += 1;
       bun.animations.play("dash_r1");
       d -= 1;
     }
@@ -248,9 +246,9 @@ setInterval(() => {
   eggs.push({
     x: Math.random() * (canvas.width - 20) + 10,
     y: 50,
-    speed: -4
+    speed: 0
   });
-}, 800);
+}, 5000);
 
 //saws
 let saws = [];
@@ -285,14 +283,34 @@ setInterval(() => {
     })
   }
   )
-  new_saw.speed = -5;
+  new_saw.speed = 0;
   new_saw.bounced = (Math.random() > 0.6)
   new_saw.animations.play("spin")
   saws.push(new_saw);
-}, 50);
+}, 400);
+
+var scrollAmount;
+
+
+document.addEventListener('keydown', e => {
+    if (e.code === "ArrowLeft") {
+      window.scrollBy({ left: -9});
+    } 
+    else if (e.code === "ArrowRight") {
+      window.scrollBy({ left: 9});
+    }
+});
+
+// document.addEventListener('keyup', e => {
+//  scrollAmount = 0;
+// });
+
+// setInterval (function() {
+//      window.scrollBy({ left: scrollAmount});
+// },10)
 
 setInterval(() => {
-  timer2 -= 1;
+  timer2 += 1;
   saveHiscore()
   document.querySelector("#timer2").innerText = `Timer: ${timer2}`
 }, 1000)

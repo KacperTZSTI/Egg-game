@@ -8,16 +8,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js" integrity="sha512-L6Z/YtIPQ7eU3BProP34WGU5yIRk7tNHk7vaC2dB1Vy1atz6wl9mCkTPPZ2Rn1qPr+vY2mZ9odZLdGYuaBk7dQ==" crossorigin="anonymous"></script>
     <title>jajca</title>
 </head>
-<body>
+<style> 
+    .prevent-select {
+      -webkit-user-select: none; /* Safari */
+      -ms-user-select: none; /* IE 10 and IE 11 */
+      user-select: none; /* Standard syntax */
+    }
+    </style>
+<body style="background-color: rgb(26, 23, 23);">
     <main class="flex content-center" style="image-rendering: pixelated;">
 
         <canvas id="game" width="20000" height="700"></canvas>
     
 
-    <button id="pallete" class="p-4 bg-gray-200">Pallete swap</button>
+    <button id="pallete" class="p-4 bg-gray-200" ><p class="prevent-select">Help me</p></button>
     </main>
-    <h1 id="hiscore2" class="p-4 text-2xl absolute left-4 top-4 text-white">High score: 0</h1>
-    <h1 id="score2" class="p-4 text-2xl absolute left-4 top-12 text-white">weź zainwestuj w dżejesa</h1>
-    <h1 id="timer2" class="p-4 text-2xl absolute left-4 top-24 text-white">Time: 0</h1>
+    <h1 id="hiscore2" class="prevent-select"><p class="prevent-select">High score: 0</p></h1>
+    <h1 id="score2" class="prevent-select"><p class="prevent-select">weź zainwestuj w dżejesa</p></h1>
+    <h1 id="timer2" class="prevent-select"><p class="prevent-select">Time: 0</p></h1>
 </body>
 </html>

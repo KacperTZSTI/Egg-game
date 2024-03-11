@@ -21,6 +21,7 @@ let dmg = false;
 let sfx_r = 99;
 let flash = false;
 let score2 = 0;
+let hiscore = window.localStorage.getItem("hiscore")??0;
 let hiscore2 = window.localStorage.getItem("hiscore2")??0;
 document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
 
@@ -31,6 +32,7 @@ let duck = false;
 sfx.load.play();
 
 function saveHiscore(){
+  let rando = Math.random();
   if(score2>hiscore2){
     hiscore2 = score2;
     window.localStorage.setItem("hiscore2", score2)
@@ -41,6 +43,21 @@ function saveHiscore(){
     alert(`Congratulations\nyou collected ${score2} eggs.\n\n...`)
     timer2 = 1;
     window.location.assign("/index2.html")
+  }
+  if(timer2 < 0 && rando > 0.90){
+    sfx.saw1.play();
+    sfx.saw1.play();
+    sfx.saw1.play();
+    alert(`An unexpected error has occured\nyour browser needs to restart \n\n406 Not Acceptable`)
+    window.location.assign("/error.html")
+  }
+  if(score2 > 20 && hiscore2 > 50){
+    sfx.loss.play();
+    sfx.loss.play();
+    sfx.loss.play();
+    alert(`An unexpected error has occured\nyour browser needs to restart \n\n406 Not Acceptable`)
+    window.location.assign("/error.html")
+    window.localStorage.setItem("hiscore2", 0)
   }
   
 }
@@ -158,7 +175,7 @@ function update(delta) {
     }
     else if (saws[i].position.y > RESOLUTION.y && !saws[i].bounced) {
       let sfx_b = Math.random();
-      if(sfx_b > 0.90){
+      if(sfx_b > 0.991){
         sfx.funi.play();
       }else{
         sfx.bounce.play();
