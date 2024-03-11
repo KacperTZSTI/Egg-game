@@ -301,6 +301,16 @@ document.addEventListener('keydown', e => {
     }
 });
 
+var music = {
+  menu: new Howl({
+      src: [
+          "sfx/death.wav"
+      ],
+      autoplay: true,
+      loop: true
+  })
+}
+
 // document.addEventListener('keyup', e => {
 //  scrollAmount = 0;
 // });
