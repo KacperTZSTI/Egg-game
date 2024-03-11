@@ -39,6 +39,7 @@ function saveHiscore(){
   if(timer2<0){
     sfx.loss.play();
     alert(`Congratulations\nyou collected ${score2} eggs.\n\n...`)
+    timer2 = 1;
     window.location.assign("/index2.html")
   }
   

@@ -158,7 +158,7 @@ function update(delta) {
     }
     else if (saws[i].position.y > RESOLUTION.y && !saws[i].bounced) {
       let sfx_b = Math.random();
-      if(sfx_b > 0.90){
+      if(sfx_b > 0.98){
         sfx.funi.play();
       }else{
         sfx.bounce.play();
