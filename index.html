@@ -5,31 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.1/howler.min.js" integrity="sha512-L6Z/YtIPQ7eU3BProP34WGU5yIRk7tNHk7vaC2dB1Vy1atz6wl9mCkTPPZ2Rn1qPr+vY2mZ9odZLdGYuaBk7dQ==" crossorigin="anonymous"></script>
-
-    
-    <title>Document</title>
     <script>
-        window.onload = ()=>{
-
-            var music = {
-                menu: new Howl({
-                    src: [
-                        "sfx/menu.wav"
+        var music = {
+            menu: new Howl({
+                src: [
+                    "sfx/menu.wav"
                 ],
                 autoplay: true,
                 loop: true
             })
         }
-        setInterval(()=>{
-            if(!music.menu.playing()){
-                music.menu.play()
-            }
-        }, 200)
 
-    }
+        window.onload = ()=>{
+
+            document.querySelector("#hiscore").innerHTML = `High score: ${window.localStorage.getItem("hiscore")??0}`;
+        }
     </script>
+    <title>Idex</title>
 </head>
-<body>
-    <iframe src="index1.html" class="w-screen h-screen" id="gameiframe"></iframe>
+<body class="p-16 flex flex-col items-center gap-4">
+    <h1 class="text-2xl">JAJO GAMING</h1>
+    <a class="px-8 py-4 bg-black text-white hover:underline" href="game1.html">START</a>
+    <pre>
+INSTRUCTIONS
+Hold &lt;Z&gt; to dash
+Use arrows to move
+Click for music :3
+
+Current objective: <a href="index2.html">< SURVIVE ></a>
+    </pre>
+    <h1 class="text-2xl" id="hiscore">You need JavaScript enabled for this game to work.</h1>
+
+
 </body>
 </html>

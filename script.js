@@ -341,15 +341,15 @@ setInterval(() => {
   saws.push(new_saw);
 }, 50);
 
-// var music = {
-//   menu: new Howl({
-//       src: [
-//           "sfx/game.wav"
-//       ],
-//       autoplay: true,
-//       loop: true
-//   })
-// }
+var music = {
+  menu: new Howl({
+      src: [
+          "sfx/game.wav"
+      ],
+      autoplay: true,
+      loop: true
+  })
+}
 
 setInterval(() => {
   timer += 1;
