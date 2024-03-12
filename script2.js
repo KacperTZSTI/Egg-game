@@ -44,6 +44,9 @@ function saveHiscore(){
     timer2 = 1;
     window.location.assign("/index2.html")
   }
+  if(score2 == 55){
+    alert(`stop`)
+  }
   if(timer2 < 0 && rando > 0.90){
     sfx.saw1.play();
     sfx.saw1.play();
@@ -175,7 +178,7 @@ function update(delta) {
     }
     else if (saws[i].position.y > RESOLUTION.y && !saws[i].bounced) {
       let sfx_b = Math.random();
-      if(sfx_b > 0.991){
+      if(sfx_b > 0.994){
         sfx.funi.play();
       }else{
         sfx.bounce.play();

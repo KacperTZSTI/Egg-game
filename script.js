@@ -40,9 +40,12 @@ function saveHiscore(){
   }
   if(score<0){
     sfx.loss.play();
-    alert(`skill issue\nyou only survived ${timer} seconds.\n\npathetic.`)
+    alert(`Youre dead\nyou survived ${timer} seconds.\n\nPlease try to do worse`)
     score = 1;
     window.location.assign("/")
+  }
+  if(timer == 100){
+    alert(`just die`)
   }
   if(score < 0 && rando > 0.90){
     sfx.saw1.play();
@@ -176,7 +179,7 @@ function update(delta) {
     }
     else if (saws[i].position.y > RESOLUTION.y && !saws[i].bounced) {
       let sfx_b = Math.random();
-      if(sfx_b > 0.991){
+      if(sfx_b > 0.994){
         sfx.funi.play();
       }else{
         sfx.bounce.play();
