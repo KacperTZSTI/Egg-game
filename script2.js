@@ -54,7 +54,7 @@ function saveHiscore(){
     alert(`An unexpected error has occured\nyour browser needs to restart \n\n406 Not Acceptable`)
     window.location.assign("/error.html")
   }
-  if(score2 > 20 && hiscore2 > 50){
+  if(score2 > 30 && hiscore2 > 55){
     sfx.loss.play();
     sfx.loss.play();
     sfx.loss.play();

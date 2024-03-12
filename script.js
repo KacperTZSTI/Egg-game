@@ -8,7 +8,7 @@ import { FrameIndexPattern } from "./pattern.js";
 import { sfx } from "./sfx.js";
 import { CHARGE_LEFT, CHARGE_RIGHT, COUGHT1, COUGHT2, DASH_LEFT1, DASH_LEFT2, DASH_RIGHT1, DASH_RIGHT2, DUCK1, DUCK2, SAW, STAND_LEFT, STAND_RIGHT, WALK_LEFT, WALK_RIGHT } from "./animation.js";
 
-const d_over_dx = 0.00019245008973;
+const d_over_dx = 0.00019245008973/2;
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -44,7 +44,7 @@ function saveHiscore(){
     score = 1;
     window.location.assign("/")
   }
-  if(timer == 100){
+  if(timer == 140){
     alert(`just die`)
   }
   if(score < 0 && rando > 0.90){
@@ -54,7 +54,7 @@ function saveHiscore(){
     alert(`An unexpected error has occured\nyour browser needs to restart \n\n406 Not Acceptable`)
     window.location.assign("/error.html")
   }
-  if(timer > 20 && hiscore > 99){
+  if(timer > 40 && hiscore > 140){
     sfx.saw1.play();
     sfx.saw1.play();
     sfx.saw1.play();
