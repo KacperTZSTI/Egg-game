@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+
+window.onload = ()=>{
+
+document.querySelector("#hiscore").innerHTML = `High score: ${window.localStorage.getItem("hiscore")??0}`;
+}
+    </script>
+    <title>Idex</title>
+</head>
+<body class="p-16 flex flex-col items-center gap-4">
+    <h1 class="text-2xl">JAJO GAMING</h1>
+    <a class="px-8 py-4 bg-black text-white hover:underline" href="game1.html">START</a>
+    <pre>
+INSTRUCTIONS
+Hold &lt;Z&gt; to dash
+Use arrows to move
+Click for music :3
+
+Current objective: <a href="index2.html">< SURVIVE ></a>
+    </pre>
+    <h1 class="text-2xl" id="hiscore">You need JavaScript enabled for this game to work.</h1>
+
+
+</body>
+</html>
