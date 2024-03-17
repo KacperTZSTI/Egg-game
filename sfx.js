@@ -44,4 +44,9 @@ export var sfx = {
         'sfx/funy.mp3'
       ]
     }),
+    bird: new Howl({
+      src: [
+        'sfx/bird.mp3'
+      ]
+    }),
   }

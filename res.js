@@ -20,6 +20,7 @@ class Res {
         goldegg: "/sprites/goldenegg.png",
         crow: "/sprites/crow.png",
         crow_sh: "/sprites/crow_sh.png",
+        crow_l: "/sprites/crow_left.png",
         indicator: "/sprites/boss_indicator.png",
       };
   

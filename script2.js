@@ -23,6 +23,7 @@ let flash = false;
 let score2 = 0;
 let hiscore = window.localStorage.getItem("hiscore")??0;
 let hiscore2 = window.localStorage.getItem("hiscore2")??0;
+let boss = false;
 document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
 
 let timer2 = 100;
@@ -37,8 +38,15 @@ function saveHiscore(){
     window.localStorage.setItem("hiscore2", score2)
     document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
   }
-  if(timer2<1){
+  if(timer2<10 && boss == false){
     timer2 = 50;
+    boss = true;
+  }
+  if(timer2<0){
+    sfx.loss.play();
+    alert(`Congratulations\nyou collected ${score2} eggs.\n\n...`)
+    timer2 = 99;
+    window.location.assign("/")
   }
 }
 
@@ -66,6 +74,25 @@ const goldegg = new Sprite({
 const back = new Sprite({
   resource: res.images.back2,
   frameSize: new Vector2(1800, 1700)
+}
+)
+
+const crow_sh = new Sprite({
+  resource: res.images.crow_sh,
+  frameSize: new Vector2(400, 500)
+}
+)
+
+const crow_left = new Sprite({
+  resource: res.images.crow_l,
+  frameSize: new Vector2(400, 500)
+}
+)
+let crowLPos = new Vector2(-400, -60);
+
+const indicator = new Sprite({
+  resource: res.images.indicator,
+  frameSize: new Vector2(1000, 1000)
 }
 )
 
@@ -125,16 +152,19 @@ document.addEventListener("keyup", (e) => {
 })
 
 function drawGold(){
-if(timer2>88){
+  if(boss==false){
   goldegg.drawImage(ctx, 520, 50);
-}
+  }
 }
 
 function update(delta) {
-  if(timer2>90){
+  if(timer2>11){
     goldegg.animations.play("float");
     goldegg.step(delta);
-  }else{
+  }if(timer2==11){
+    sfx.bird.play();
+    crowLPos.x += 30
+  }if(timer2<11){
     goldegg.animations.play("break");
     goldegg.step(delta);
   }
@@ -192,6 +222,41 @@ function update(delta) {
       saws[i].bounced = true;
       saws[i].position.y = RESOLUTION.y - 1;
     }
+  }
+
+  indicator.position.y += 20;
+  //crow
+  if(boss==true){
+  for (let i = 0; i < crow.length; i++) {
+    crow[i].position.y += 25;
+    crow[i].position.x += 1;
+    // setInterval(() => {
+    //   crow_sh.drawImage(ctx, crow[i].position.x, crow[i].position.y)
+    // }, 100)
+    if (
+      crow[i].position.x >= bunPos.x - 300 && crow[i].position.y >= bunPos.y - 60 && crow[i].position.x <= bunPos.x + 10 && crow[i].position.y <= bunPos.y + 100
+    ) {
+      sfx_r = Math.random()
+      if(sfx_r < 0.25){
+        sfx.saw1.play();
+      }
+      if(sfx_r > 0.25 && sfx_r < 0.5){
+        sfx.saw2.play();
+      }
+      if(sfx_r > 0.5 && sfx_r < 0.75){
+        sfx.saw3.play();
+      }
+      if(sfx_r > 0.75){
+        sfx.saw4.play();
+      }
+      dmg = true;
+      saveHiscore();
+      score2 -= 2;
+    }
+    else if (crow[i].position.y > RESOLUTION.y) {
+      crow.splice(i, 1);
+    }
+  }
   }
   if (!input.direction) {
     if (facing == "LEFT") { bun.animations.play("idle_l") }
@@ -287,8 +352,6 @@ function update(delta) {
   bun.step(delta);
 }
 
-
-
 //eggs
 let eggs = [];
 
@@ -315,15 +378,6 @@ function drawSaws() {
   }
 }
 
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  back.drawImage(ctx, 0, 0);
-  bun.drawImage(ctx, bunPos.x, bunPos.y);
-  document.querySelector("#score2").innerText = `Eggs: ${score2}`
-  drawEggs();
-  drawSaws();
-  drawGold();
-} 
 
 setInterval(() => {
   let chance = (d_over_dx * ((100-timer2) ** 2))/10
@@ -343,8 +397,42 @@ setInterval(() => {
   new_saw.speed = -5;
   new_saw.bounced = (Math.random() > 0.6)
   new_saw.animations.play("spin")
+  if(boss==false){
   saws.push(new_saw);
+}
 }, 50);
+
+
+let crow = [];
+
+function drawCrow() {
+  for (let i = 0; i < crow.length; i++) {
+    crow[i].drawImage(ctx, crow[i].position.x, crow[i].position.y);
+    indicator.drawImage(ctx, crow[i].position.x, crow[i].position.y+1400);
+  }
+}
+
+
+setInterval(() => {
+  if(boss==true){
+  let chance = (d_over_dx * ((100-timer2) ** 2))
+  if (Math.random() > chance) return;
+  let new_crow = new Sprite({
+    resource: res.images.crow,
+    frameSize: new Vector2(400, 500),
+    hFrames: 3,
+    position: new Vector2(Math.random() * (canvas.width - 20) + 10, -2000),
+    vFrames: 1,
+    frame: 0,
+  }
+  )
+  crow.push(new_crow);
+  if(boss == true){
+    sfx.bird.play();
+  }
+}
+}, 1500);
+
 
 var music = {
   menu: new Howl({
@@ -355,6 +443,18 @@ var music = {
       loop: true
   })
 }
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  back.drawImage(ctx, 0, 0);
+  bun.drawImage(ctx, bunPos.x, bunPos.y);
+  crow_left.drawImage(ctx, crowLPos.x, crowLPos.y);
+  document.querySelector("#score2").innerText = `Eggs: ${score2}`
+  drawEggs();
+  drawCrow();
+  drawSaws();
+  drawGold();
+} 
 
 setInterval(() => {
   timer2 -= 1;

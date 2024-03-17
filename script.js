@@ -44,18 +44,18 @@ function saveHiscore(){
     score = 99;
     window.location.assign("/")
   }
-  if(timer == 190){
+  if(timer == 250){
     alert(`just die`)
-    d_over_dx = 0.00019245008973;
+    d_over_dx = 0.0002;
   }
-  if(score < 0 && rando > 0.90){
+  if(score < 0 && rando > 0.95){
     sfx.saw1.play();
     sfx.saw1.play();
     sfx.saw1.play();
     alert(`An unexpected error has occured\nyour browser needs to restart \n\n406 Not Acceptable`)
     window.location.assign("/error.html")
   }
-  if(timer > 120 && lastHiscore > 190){
+  if(timer > 120 && lastHiscore > 250){
     sfx.saw1.play();
     sfx.saw1.play();
     sfx.saw1.play();
