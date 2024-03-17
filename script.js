@@ -6,9 +6,9 @@ import { Input } from "./input.js";
 import { Animations } from "./animation_player.js";
 import { FrameIndexPattern } from "./pattern.js";
 import { sfx } from "./sfx.js";
-import { CHARGE_LEFT, CHARGE_RIGHT, COUGHT1, COUGHT2, DASH_LEFT1, DASH_LEFT2, DASH_RIGHT1, DASH_RIGHT2, DUCK1, DUCK2, SAW, STAND_LEFT, STAND_RIGHT, WALK_LEFT, WALK_RIGHT } from "./animation.js";
+import { CHARGE_LEFT, CHARGE_RIGHT, COUGHT1, COUGHT2, DASH_LEFT1, DASH_LEFT2, DASH_RIGHT1, DASH_RIGHT2, DUCK1, DUCK2, SAW, STAND_LEFT, STAND_RIGHT, WALK_LEFT, WALK_RIGHT, LASER } from "./animation.js";
 
-const d_over_dx = 0.00019245008973/2;
+let d_over_dx = 0.00019245008973/4;
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -30,7 +30,7 @@ const RESOLUTION = new Vector2(1200, 700)
 let duck = false;
 
 sfx.load.play();
-
+let lastHiscore = window.localStorage.getItem("hiscore")??0;
 function saveHiscore(){
   let rando = Math.random();
   if(timer>hiscore){
@@ -44,8 +44,9 @@ function saveHiscore(){
     score = 1;
     window.location.assign("/")
   }
-  if(timer == 140){
+  if(timer == 180){
     alert(`just die`)
+    d_over_dx = 0.00019245008973/2;
   }
   if(score < 0 && rando > 0.90){
     sfx.saw1.play();
@@ -54,7 +55,7 @@ function saveHiscore(){
     alert(`An unexpected error has occured\nyour browser needs to restart \n\n406 Not Acceptable`)
     window.location.assign("/error.html")
   }
-  if(timer > 40 && hiscore > 140){
+  if(timer > 120 && lastHiscore > 140){
     sfx.saw1.play();
     sfx.saw1.play();
     sfx.saw1.play();
@@ -134,6 +135,7 @@ document.addEventListener("keyup", (e) => {
 })
 
 function update(delta) {
+  //eggs
   if (!z && !input.heldDirections.length) d = 0;
   for (let i = 0; i < eggs.length; i++) {
     eggs[i].y += eggs[i].speed;
@@ -148,6 +150,7 @@ function update(delta) {
       score += 1;
     }
   }
+  //saws
   for (let i = 0; i < saws.length; i++) {
     saws[i].position.y += saws[i].speed;
     saws[i].speed += 0.15;
@@ -174,6 +177,7 @@ function update(delta) {
       saveHiscore();
       score -= 3;
     }
+    //bouncing
     else if (saws[i].position.y > RESOLUTION.y && saws[i].bounced) {
       saws.splice(i, 1);
     }
@@ -189,6 +193,41 @@ function update(delta) {
       saws[i].position.y = RESOLUTION.y - 1;
     }
   }
+  //lasers
+  for (let i = 0; i < lasers.length; i++) {
+    lasers[i].animations.play("laser");
+    lasers[i].step(delta);
+    setTimeout(() => {
+      lasers.splice(i, 1);
+    }, 2700)
+    setTimeout(() => {
+      checkCollision()
+    }, 700)
+
+    function checkCollision(){
+      if (
+        lasers[i].position.x >= bunPos.x - 60 && lasers[i].position.x <= bunPos.x + 80
+      ) {
+        sfx_r = Math.random()
+        if(sfx_r < 0.25){
+          sfx.saw1.play();
+        }
+        if(sfx_r > 0.25 && sfx_r < 0.5){
+          sfx.saw2.play();
+        }
+        if(sfx_r > 0.5 && sfx_r < 0.75){
+          sfx.saw3.play();
+        }
+        if(sfx_r > 0.75){
+          sfx.saw4.play();
+        }
+        dmg = true;
+        saveHiscore();
+        score -= 1;
+      }
+    }
+  }
+  //movement
   if (!input.direction) {
     if (facing == "LEFT") { bun.animations.play("idle_l") }
     if (facing == "RIGHT") { bun.animations.play("idle_r") }
@@ -203,6 +242,7 @@ function update(delta) {
       bun.animations.play("move_r");
     }
   }
+  //dashing
   if (z == true) {
     // sfx.egg.play();
     d += 2;
@@ -229,6 +269,7 @@ function update(delta) {
   }
   if (bunPos.x < -120) bunPos.x = RESOLUTION.x;
   if (bunPos.x > RESOLUTION.x) bunPos.x = -120;
+  //damage
   if (flash == true) {
     if (!input.direction) {
       if (facing == "LEFT") { bun.animations.play("flash1") }
@@ -264,7 +305,7 @@ function update(delta) {
     }, 400);
   }
   facing = input.direction ?? facing;
-
+  //duck
   if (duck == true) {
     if (!input.direction) {
       if (facing == "LEFT") { bun.animations.play("duck1") }
@@ -284,7 +325,6 @@ function update(delta) {
 }
 
 
-
 //eggs
 let eggs = [];
 
@@ -302,6 +342,7 @@ setInterval(() => {
   });
 }, 800);
 
+
 //saws
 let saws = [];
 
@@ -309,15 +350,6 @@ function drawSaws() {
   for (let i = 0; i < saws.length; i++) {
     saws[i].drawImage(ctx, saws[i].position.x, saws[i].position.y);
   }
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  back.drawImage(ctx, 0, 0);
-  bun.drawImage(ctx, bunPos.x, bunPos.y);
-  document.querySelector("#score").innerText = `Eggs: ${score}`
-  drawEggs();
-  drawSaws();
 }
 
 setInterval(() => {
@@ -339,7 +371,47 @@ setInterval(() => {
   new_saw.bounced = (Math.random() > 0.6)
   new_saw.animations.play("spin")
   saws.push(new_saw);
-}, 50);
+}, 100);
+
+//lasews
+let lasers = [];
+
+function drawLaser() {
+  for (let i = 0; i < lasers.length; i++) {
+    lasers[i].drawImage(ctx, lasers[i].position.x, lasers[i].position.y);
+  }
+}
+
+setInterval(() => {
+  let chance = (d_over_dx * ((timer) ** 2))/7
+  if (Math.random() > chance) return;
+  let new_laser = new Sprite({
+    resource: res.images.laser,
+    frameSize: new Vector2(100, 700),
+    hFrames: 11,
+    position: new Vector2(Math.random() * (canvas.width - 20) + 10, 0),
+    vFrames: 1,
+    frame: 0,
+    animations: new Animations({
+      laser: new FrameIndexPattern(LASER),
+    })
+  }
+  )
+  new_laser.animations.play("laser")
+  lasers.push(new_laser);
+}, 2500);
+
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  back.drawImage(ctx, 0, 0);
+  bun.drawImage(ctx, bunPos.x, bunPos.y);
+  document.querySelector("#score").innerText = `Eggs: ${score}`
+  drawEggs();
+  drawSaws();
+  drawLaser();
+}
+
 
 var music = {
   menu: new Howl({
@@ -351,6 +423,7 @@ var music = {
   })
 }
 
+//timer
 setInterval(() => {
   timer += 1;
   saveHiscore()

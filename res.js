@@ -5,9 +5,18 @@ class Res {
         bun: "/sprites/bnuyy.png",
         eg: "/sprites/eg1.png",
         saw: "/sprites/saw.png",
+        laser: "/sprites/laser.png",
         back2: "/sprites/back2.png",
         bun2: "/sprites/bnuyy2.png",
-        black: "/sprites/black.png"
+        black: "/sprites/black.png",
+        r1: "/sprites/rl1.png",
+        r2: "/sprites/rl2.png",
+        r3: "/sprites/rl3.png",
+        r4: "/sprites/rl4.png",
+        r5: "/sprites/rl5.png",
+        r6: "/sprites/rl6.png",
+        r7: "/sprites/rl7.png",
+        r8: "/sprites/rl8.png",
       };
   
       this.images = {};
