@@ -49,6 +49,47 @@ const back = new Sprite({
 }
 )
 
+const r1 = new Sprite({
+  resource: res.images.r1,
+  frameSize: new Vector2(600, 600)
+}
+)
+const r2 = new Sprite({
+  resource: res.images.r2,
+  frameSize: new Vector2(600, 600)
+}
+)
+const r3 = new Sprite({
+  resource: res.images.r3,
+  frameSize: new Vector2(600, 600)
+}
+)
+const r4 = new Sprite({
+  resource: res.images.r4,
+  frameSize: new Vector2(600, 600)
+}
+)
+const r5 = new Sprite({
+  resource: res.images.r5,
+  frameSize: new Vector2(600, 600)
+}
+)
+const r6 = new Sprite({
+  resource: res.images.r6,
+  frameSize: new Vector2(600, 600)
+}
+)
+const r7 = new Sprite({
+  resource: res.images.r7,
+  frameSize: new Vector2(600, 600)
+}
+)
+const r8 = new Sprite({
+  resource: res.images.r8,
+  frameSize: new Vector2(600, 600)
+}
+)
+
 const bun = new Sprite({
   resource: res.images.bun2,
   frameSize: new Vector2(176, 160),
@@ -262,6 +303,14 @@ function drawSaws() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   back.drawImage(ctx, 0, 0);
+  r1.drawImage(ctx, 3000, bunPos.y + 30);
+  r2.drawImage(ctx, 12000, bunPos.y - 150);
+  r3.drawImage(ctx, 4000, bunPos.y - 150);
+  r4.drawImage(ctx, 6200, bunPos.y - 240);
+  r5.drawImage(ctx, 10000, bunPos.y - 120);
+  r6.drawImage(ctx, 15000, bunPos.y - 10);
+  r7.drawImage(ctx, 16000, bunPos.y - 320);
+  r8.drawImage(ctx, 19000, bunPos.y - 250);
   bun.drawImage(ctx, bunPos.x, bunPos.y);
   document.querySelector("#score2").innerText = `Eggs: ${score2}`
   drawEggs();
@@ -269,7 +318,7 @@ function draw() {
 } 
 
 setInterval(() => {
-  let chance = (d_over_dx * ((timer2) ** 2))/5
+  let chance = (d_over_dx * ((timer2) ** 2))/7
   if (Math.random() > chance) return;
   let new_saw = new Sprite({
     resource: res.images.saw,
