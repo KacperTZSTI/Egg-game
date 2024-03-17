@@ -17,6 +17,10 @@ class Res {
         r6: "/sprites/rl6.png",
         r7: "/sprites/rl7.png",
         r8: "/sprites/rl8.png",
+        goldegg: "/sprites/goldenegg.png",
+        crow: "/sprites/crow.png",
+        crow_sh: "/sprites/crow_sh.png",
+        indicator: "/sprites/boss_indicator.png",
       };
   
       this.images = {};

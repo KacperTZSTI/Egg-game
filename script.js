@@ -8,7 +8,7 @@ import { FrameIndexPattern } from "./pattern.js";
 import { sfx } from "./sfx.js";
 import { CHARGE_LEFT, CHARGE_RIGHT, COUGHT1, COUGHT2, DASH_LEFT1, DASH_LEFT2, DASH_RIGHT1, DASH_RIGHT2, DUCK1, DUCK2, SAW, STAND_LEFT, STAND_RIGHT, WALK_LEFT, WALK_RIGHT, LASER } from "./animation.js";
 
-let d_over_dx = 0.00019245008973/4;
+let d_over_dx = 0.00019245008973/3;
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -41,12 +41,12 @@ function saveHiscore(){
   if(score<0){
     sfx.loss.play();
     alert(`Youre dead\nyou survived ${timer} seconds.\n\nPlease try to do worse`)
-    score = 1;
+    score = 99;
     window.location.assign("/")
   }
-  if(timer == 180){
+  if(timer == 190){
     alert(`just die`)
-    d_over_dx = 0.00019245008973/2;
+    d_over_dx = 0.00019245008973;
   }
   if(score < 0 && rando > 0.90){
     sfx.saw1.play();
@@ -55,7 +55,7 @@ function saveHiscore(){
     alert(`An unexpected error has occured\nyour browser needs to restart \n\n406 Not Acceptable`)
     window.location.assign("/error.html")
   }
-  if(timer > 120 && lastHiscore > 140){
+  if(timer > 120 && lastHiscore > 190){
     sfx.saw1.play();
     sfx.saw1.play();
     sfx.saw1.play();
@@ -183,7 +183,7 @@ function update(delta) {
     }
     else if (saws[i].position.y > RESOLUTION.y && !saws[i].bounced) {
       let sfx_b = Math.random();
-      if(sfx_b > 0.994){
+      if(sfx_b > 0.996){
         sfx.funi.play();
       }else{
         sfx.bounce.play();
@@ -399,7 +399,7 @@ setInterval(() => {
   )
   new_laser.animations.play("laser")
   lasers.push(new_laser);
-}, 2500);
+}, 3000);
 
 
 function draw() {

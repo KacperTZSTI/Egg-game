@@ -135,6 +135,52 @@ const makeStandingFrames = (rootFrame = 0) => {
       ]
     }
   }
+  const makeFloatFrames = (rootFrame=0) => {
+    return {
+      duration: 1200,
+      frames: [
+        {
+          time: 0,
+          frame: rootFrame
+        },
+        {
+          time: 200,
+          frame: rootFrame+1
+        },
+        {
+          time: 400,
+          frame: rootFrame+2
+        },
+        {
+          time: 600,
+          frame: rootFrame+3
+        },
+        {
+          time: 800,
+          frame: rootFrame+2
+        },
+        {
+          time: 1000,
+          frame: rootFrame+1
+        },
+      ]
+    }
+  }
+  const makeBreakFrames = (rootFrame=0) => {
+    return {
+      duration: 3000,
+      frames: [
+        {
+          time: 0,
+          frame: rootFrame
+        },
+        {
+          time: 2000,
+          frame: rootFrame+1
+        },
+      ]
+    }
+  }
   const makeLaserFrames = (rootFrame=0) => {
     return {
       duration: 2700,
@@ -455,3 +501,6 @@ const makeStandingFrames = (rootFrame = 0) => {
 
   export const DUCK1 = makeDuckFrames(2);
   export const DUCK2 = makeDuckFrames(15);
+
+  export const FLOAT = makeFloatFrames(0);
+  export const BREAK = makeBreakFrames(4);

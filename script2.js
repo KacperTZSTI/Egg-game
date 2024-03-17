@@ -6,7 +6,7 @@ import { Input } from "./input.js";
 import { Animations } from "./animation_player.js";
 import { FrameIndexPattern } from "./pattern.js";
 import { sfx } from "./sfx.js";
-import { CHARGE_LEFT, CHARGE_RIGHT, COUGHT1, COUGHT2, DASH_LEFT1, DASH_LEFT2, DASH_RIGHT1, DASH_RIGHT2, DUCK1, DUCK2, SAW, STAND_LEFT, STAND_RIGHT, WALK_LEFT, WALK_RIGHT } from "./animation.js";
+import {BREAK, CHARGE_LEFT, CHARGE_RIGHT, COUGHT1, COUGHT2, DASH_LEFT1, DASH_LEFT2, DASH_RIGHT1, DASH_RIGHT2, DUCK1, DUCK2, FLOAT, SAW, STAND_LEFT, STAND_RIGHT, WALK_LEFT, WALK_RIGHT } from "./animation.js";
 
 const d_over_dx = 0.00019245008973;
 
@@ -32,37 +32,14 @@ let duck = false;
 sfx.load.play();
 
 function saveHiscore(){
-  let rando = Math.random();
   if(score2>hiscore2){
     hiscore2 = score2;
     window.localStorage.setItem("hiscore2", score2)
     document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
   }
-  if(timer2<0){
-    sfx.loss.play();
-    alert(`Congratulations\nyou collected ${score2} eggs.\n\n...`)
-    timer2 = 1;
-    window.location.assign("/index2.html")
+  if(timer2<1){
+    timer2 = 50;
   }
-  if(score2 == 55){
-    alert(`stop`)
-  }
-  if(timer2 < 0 && rando > 0.90){
-    sfx.saw1.play();
-    sfx.saw1.play();
-    sfx.saw1.play();
-    alert(`An unexpected error has occured\nyour browser needs to restart \n\n406 Not Acceptable`)
-    window.location.assign("/error.html")
-  }
-  if(score2 > 30 && hiscore2 > 55){
-    sfx.loss.play();
-    sfx.loss.play();
-    sfx.loss.play();
-    alert(`An unexpected error has occured\nyour browser needs to restart \n\n406 Not Acceptable`)
-    window.location.assign("/error.html")
-    window.localStorage.setItem("hiscore2", 0)
-  }
-  
 }
 
 document.querySelector("#pallete").onclick = () => {
@@ -70,6 +47,21 @@ document.querySelector("#pallete").onclick = () => {
   back.resource = p ? res.images.back : res.images.back2;
   bun.resource = p ? res.images.bun : res.images.bun2;
 }
+
+const goldegg = new Sprite({
+  resource: res.images.goldegg,
+  frameSize: new Vector2(88, 115),
+  hFrames: 6,
+  vFrames: 1,
+  frame: 0,
+  width: 100,
+  height: 100,
+  animations: new Animations({
+    float: new FrameIndexPattern(FLOAT),
+    break: new FrameIndexPattern(BREAK),
+  })
+}
+)
 
 const back = new Sprite({
   resource: res.images.back2,
@@ -132,7 +124,20 @@ document.addEventListener("keyup", (e) => {
   }
 })
 
+function drawGold(){
+if(timer2>88){
+  goldegg.drawImage(ctx, 520, 50);
+}
+}
+
 function update(delta) {
+  if(timer2>90){
+    goldegg.animations.play("float");
+    goldegg.step(delta);
+  }else{
+    goldegg.animations.play("break");
+    goldegg.step(delta);
+  }
   if (!z && !input.heldDirections.length) d = 0;
   for (let i = 0; i < eggs.length; i++) {
     eggs[i].y += eggs[i].speed;
@@ -317,6 +322,7 @@ function draw() {
   document.querySelector("#score2").innerText = `Eggs: ${score2}`
   drawEggs();
   drawSaws();
+  drawGold();
 } 
 
 setInterval(() => {
