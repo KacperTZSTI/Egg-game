@@ -13,6 +13,7 @@ const d_over_dx = 0.00019245008973;
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 const input = new Input();
+
 let facing = "LEFT";
 let z = false;
 let d = 0;
@@ -20,6 +21,7 @@ let p = false;
 let dmg = false;
 let sfx_r = 99;
 let flash = false;
+let duck = false;
 let score2 = 0;
 let hiscore = window.localStorage.getItem("hiscore")??0;
 let hiscore2 = window.localStorage.getItem("hiscore2")??0;
@@ -33,10 +35,10 @@ document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
 
 let timer2 = 100;
 const RESOLUTION = new Vector2(1200, 700)
-let duck = false;
 
 sfx.load.play();
 
+//endgame
 function saveHiscore(){
   if(score2>hiscore2){
     hiscore2 = score2;
@@ -52,40 +54,14 @@ function saveHiscore(){
   }
 }
 
-function transition(){
-  setTimeout(() => {
-    trans2 = true;
-    console.log("1");
-  }, 400)
-  setTimeout(() => {
-    trans3 = true;
-    console.log("2");
-  }, 800)
-  setTimeout(() => {
-    trans4 = true;
-    console.log("3");
-  }, 1200)
-  setTimeout(() => {
-    trans3 = false;
-    trans5 = true;
-    console.log("4");
-  }, 1600)
-  setTimeout(() => {
-    trans2 = false;
-    trans4 = false;
-    trans5 = false;
-    boss = true;
-    console.log("5");
-  }, 2000)
-  trans = true;
-}
-
 document.querySelector("#pallete").onclick = () => {
   p = !p;
   back.resource = p ? res.images.back : res.images.back2;
   bun.resource = p ? res.images.bun : res.images.bun2;
 }
 
+
+//objects
 const goldegg = new Sprite({
   resource: res.images.goldegg,
   frameSize: new Vector2(88, 115),
@@ -100,6 +76,12 @@ const goldegg = new Sprite({
   })
 }
 )
+
+function drawGold(){
+  if(boss==false){
+  goldegg.drawImage(ctx, 520, 50);
+  }
+}
 
 const back = new Sprite({
   resource: res.images.back2,
@@ -160,6 +142,7 @@ const eg = new Sprite({
 
 let bunPos = new Vector2(350, RESOLUTION.y - bun.height);
 
+//basic movement
 document.addEventListener("keydown", (e) => {
   if (e.code === "KeyZ") {
     z = true;
@@ -181,23 +164,36 @@ document.addEventListener("keyup", (e) => {
   }
 })
 
-function drawGold(){
-  if(boss==false){
-  goldegg.drawImage(ctx, 520, 50);
-  }
+//boss transition initalizer
+function transition(){
+  setTimeout(() => {
+    trans2 = true;
+    console.log("1");
+  }, 400)
+  setTimeout(() => {
+    trans3 = true;
+    console.log("2");
+  }, 800)
+  setTimeout(() => {
+    trans4 = true;
+    console.log("3");
+  }, 1200)
+  setTimeout(() => {
+    trans3 = false;
+    trans5 = true;
+    console.log("4");
+  }, 1600)
+  setTimeout(() => {
+    trans2 = false;
+    trans4 = false;
+    trans5 = false;
+    boss = true;
+    console.log("5");
+  }, 2000)
+  trans = true;
 }
 
 function update(delta) {
-  if(timer2>11){
-    goldegg.animations.play("float");
-    goldegg.step(delta);
-  }if(timer2==11){
-    sfx.bird.play();
-    crowLPos.x += 30
-  }if(timer2<11){
-    goldegg.animations.play("break");
-    goldegg.step(delta);
-  }
   if (!z && !input.heldDirections.length) d = 0;
   for (let i = 0; i < eggs.length; i++) {
     eggs[i].y += eggs[i].speed;
@@ -212,82 +208,17 @@ function update(delta) {
       score2 += 1;
     }
   }
-  for (let i = 0; i < saws.length; i++) {
-    saws[i].position.y += saws[i].speed;
-    saws[i].speed += 0.15;
-    saws[i].animations.play("spin");
-    saws[i].step(delta);
-    if (
-      saws[i].position.x >= bunPos.x - 60 && saws[i].position.y >= bunPos.y - 60 && saws[i].position.x <= bunPos.x + 80 && saws[i].position.y <= bunPos.y + 100
-    ) {
-      sfx_r = Math.random()
-      if(sfx_r < 0.25){
-        sfx.saw1.play();
-      }
-      if(sfx_r > 0.25 && sfx_r < 0.5){
-        sfx.saw2.play();
-      }
-      if(sfx_r > 0.5 && sfx_r < 0.75){
-        sfx.saw3.play();
-      }
-      if(sfx_r > 0.75){
-        sfx.saw4.play();
-      }
-      saws.splice(i, 1);
-      dmg = true;
-      saveHiscore();
-      score2 -= 3;
-    }
-    else if (saws[i].position.y > RESOLUTION.y && saws[i].bounced) {
-      saws.splice(i, 1);
-    }
-    else if (saws[i].position.y > RESOLUTION.y && !saws[i].bounced) {
-      let sfx_b = Math.random();
-      if(sfx_b > 0.994){
-        sfx.funi.play();
-      }else{
-        sfx.bounce.play();
-      }
-      saws[i].speed = -10;
-      saws[i].bounced = true;
-      saws[i].position.y = RESOLUTION.y - 1;
-    }
+  if(timer2>11){
+    goldegg.animations.play("float");
+    goldegg.step(delta);
+  }if(timer2==11){
+    sfx.bird.play();
+    crowLPos.x += 30
+  }if(timer2<11){
+    goldegg.animations.play("break");
+    goldegg.step(delta);
   }
 
-  indicator.position.y += 20;
-  //crow
-  if(boss==true){
-  for (let i = 0; i < crow.length; i++) {
-    crow[i].position.y += 25;
-    crow[i].position.x += 1;
-    // setInterval(() => {
-    //   crow_sh.drawImage(ctx, crow[i].position.x, crow[i].position.y)
-    // }, 100)
-    if (
-      crow[i].position.x >= bunPos.x - 300 && crow[i].position.y >= bunPos.y - 60 && crow[i].position.x <= bunPos.x + 10 && crow[i].position.y <= bunPos.y + 100
-    ) {
-      sfx_r = Math.random()
-      if(sfx_r < 0.25){
-        sfx.saw1.play();
-      }
-      if(sfx_r > 0.25 && sfx_r < 0.5){
-        sfx.saw2.play();
-      }
-      if(sfx_r > 0.5 && sfx_r < 0.75){
-        sfx.saw3.play();
-      }
-      if(sfx_r > 0.75){
-        sfx.saw4.play();
-      }
-      dmg = true;
-      saveHiscore();
-      score2 -= 2;
-    }
-    else if (crow[i].position.y > RESOLUTION.y) {
-      crow.splice(i, 1);
-    }
-  }
-  }
   if (!input.direction) {
     if (facing == "LEFT") { bun.animations.play("idle_l") }
     if (facing == "RIGHT") { bun.animations.play("idle_r") }
@@ -380,6 +311,83 @@ function update(delta) {
   }
   facing = input.direction ?? facing;
   bun.step(delta);
+  
+  //hazards
+  for (let i = 0; i < saws.length; i++) {
+    saws[i].position.y += saws[i].speed;
+    saws[i].speed += 0.15;
+    saws[i].animations.play("spin");
+    saws[i].step(delta);
+    if (
+      saws[i].position.x >= bunPos.x - 60 && saws[i].position.y >= bunPos.y - 60 && saws[i].position.x <= bunPos.x + 80 && saws[i].position.y <= bunPos.y + 100
+    ) {
+      sfx_r = Math.random()
+      if(sfx_r < 0.25){
+        sfx.saw1.play();
+      }
+      if(sfx_r > 0.25 && sfx_r < 0.5){
+        sfx.saw2.play();
+      }
+      if(sfx_r > 0.5 && sfx_r < 0.75){
+        sfx.saw3.play();
+      }
+      if(sfx_r > 0.75){
+        sfx.saw4.play();
+      }
+      saws.splice(i, 1);
+      dmg = true;
+      saveHiscore();
+      score2 -= 3;
+    }
+    else if (saws[i].position.y > RESOLUTION.y && saws[i].bounced) {
+      saws.splice(i, 1);
+    }
+    else if (saws[i].position.y > RESOLUTION.y && !saws[i].bounced) {
+      let sfx_b = Math.random();
+      if(sfx_b > 0.994){
+        sfx.funi.play();
+      }else{
+        sfx.bounce.play();
+      }
+      saws[i].speed = -10;
+      saws[i].bounced = true;
+      saws[i].position.y = RESOLUTION.y - 1;
+    }
+  }
+  //crow
+  indicator.position.y += 20;
+  if(boss==true){
+  for (let i = 0; i < crow.length; i++) {
+    crow[i].position.y += 25;
+    crow[i].position.x += 1;
+    // setInterval(() => {
+    //   crow_sh.drawImage(ctx, crow[i].position.x, crow[i].position.y)
+    // }, 100)
+    if (
+      crow[i].position.x >= bunPos.x - 300 && crow[i].position.y >= bunPos.y - 60 && crow[i].position.x <= bunPos.x + 10 && crow[i].position.y <= bunPos.y + 100
+    ) {
+      sfx_r = Math.random()
+      if(sfx_r < 0.25){
+        sfx.saw1.play();
+      }
+      if(sfx_r > 0.25 && sfx_r < 0.5){
+        sfx.saw2.play();
+      }
+      if(sfx_r > 0.5 && sfx_r < 0.75){
+        sfx.saw3.play();
+      }
+      if(sfx_r > 0.75){
+        sfx.saw4.play();
+      }
+      dmg = true;
+      saveHiscore();
+      score2 -= 2;
+    }
+    else if (crow[i].position.y > RESOLUTION.y) {
+      crow.splice(i, 1);
+    }
+  }
+  }
 }
 
 //eggs
@@ -432,7 +440,7 @@ setInterval(() => {
 }
 }, 50);
 
-
+//boss
 let crow = [];
 
 function drawCrow() {
