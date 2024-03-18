@@ -23,6 +23,11 @@ let flash = false;
 let score2 = 0;
 let hiscore = window.localStorage.getItem("hiscore")??0;
 let hiscore2 = window.localStorage.getItem("hiscore2")??0;
+let trans = false;
+let trans2 = false;
+let trans3 = false;
+let trans4 = false;
+let trans5 = false;
 let boss = false;
 document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
 
@@ -38,16 +43,41 @@ function saveHiscore(){
     window.localStorage.setItem("hiscore2", score2)
     document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
   }
-  if(timer2<10 && boss == false){
-    timer2 = 50;
-    boss = true;
-  }
+  
   if(timer2<0){
     sfx.loss.play();
     alert(`Congratulations\nyou collected ${score2} eggs.\n\n...`)
     timer2 = 99;
     window.location.assign("/")
   }
+}
+
+function transition(){
+  setTimeout(() => {
+    trans2 = true;
+    console.log("1");
+  }, 400)
+  setTimeout(() => {
+    trans3 = true;
+    console.log("2");
+  }, 800)
+  setTimeout(() => {
+    trans4 = true;
+    console.log("3");
+  }, 1200)
+  setTimeout(() => {
+    trans3 = false;
+    trans5 = true;
+    console.log("4");
+  }, 1600)
+  setTimeout(() => {
+    trans2 = false;
+    trans4 = false;
+    trans5 = false;
+    boss = true;
+    console.log("5");
+  }, 2000)
+  trans = true;
 }
 
 document.querySelector("#pallete").onclick = () => {
@@ -397,7 +427,7 @@ setInterval(() => {
   new_saw.speed = -5;
   new_saw.bounced = (Math.random() > 0.6)
   new_saw.animations.play("spin")
-  if(boss==false){
+  if(trans==false){
   saws.push(new_saw);
 }
 }, 50);
@@ -445,6 +475,9 @@ var music = {
 }
 
 function draw() {
+  if(timer2<90 && trans == false){
+    transition()
+  }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   back.drawImage(ctx, 0, 0);
   bun.drawImage(ctx, bunPos.x, bunPos.y);
