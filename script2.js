@@ -36,7 +36,7 @@ let afterimage = false;
 let eg_int = 800;
 document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
 
-let timer2 = 11;
+let timer2 = 120;
 const RESOLUTION = new Vector2(1200, 700)
 
 sfx.load.play();
