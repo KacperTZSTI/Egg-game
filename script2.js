@@ -31,9 +31,12 @@ let trans3 = false;
 let trans4 = false;
 let trans5 = false;
 let boss = false;
+let br = false;
+let afterimage = false;
+let eg_int = 800;
 document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
 
-let timer2 = 100;
+let timer2 = 11;
 const RESOLUTION = new Vector2(1200, 700)
 
 sfx.load.play();
@@ -49,9 +52,10 @@ function saveHiscore(){
   if(timer2<0){
     sfx.loss.play();
     alert(`Congratulations\nyou collected ${score2} eggs.\n\n...`)
-    timer2 = 99;
+    timer2 = 20;
     window.location.assign("/")
   }
+
 }
 
 document.querySelector("#pallete").onclick = () => {
@@ -77,9 +81,14 @@ const goldegg = new Sprite({
 }
 )
 
+let goldPos = new Vector2(520, 50);
+let spd = -4;
+
 function drawGold(){
-  if(boss==false){
-  goldegg.drawImage(ctx, 520, 50);
+  goldegg.drawImage(ctx, goldPos.x, goldPos.y);
+  if (trans3==true){
+    goldPos.y += spd;
+    spd += 0.1;
   }
 }
 
@@ -100,7 +109,7 @@ const crow_left = new Sprite({
   frameSize: new Vector2(400, 500)
 }
 )
-let crowLPos = new Vector2(-400, -60);
+let crowLPos = new Vector2(-400, -40);
 
 const indicator = new Sprite({
   resource: res.images.indicator,
@@ -169,31 +178,41 @@ function transition(){
   setTimeout(() => {
     trans2 = true;
     console.log("1");
-  }, 400)
+    music.fade(1, 0, 4000);
+  }, 1)
   setTimeout(() => {
     trans3 = true;
     console.log("2");
-  }, 800)
-  setTimeout(() => {
-    trans4 = true;
-    console.log("3");
-  }, 1200)
+
+  }, 5000)
   setTimeout(() => {
     trans3 = false;
+    br = true;
+    console.log("2");
+    sfx.break.play();
+  }, 6600)
+  setTimeout(() => {
+    sfx.bird.play()
+    trans4 = true;
+    console.log("3");
+  }, 6300)
+  setTimeout(() => {
     trans5 = true;
     console.log("4");
-  }, 1600)
+    boss = true;
+    music2.play();
+    music2.rate(1.565);
+  }, 8300)
   setTimeout(() => {
     trans2 = false;
     trans4 = false;
-    trans5 = false;
-    boss = true;
     console.log("5");
-  }, 2000)
+  }, 15000)
   trans = true;
 }
 
 function update(delta) {
+
   if (!z && !input.heldDirections.length) d = 0;
   for (let i = 0; i < eggs.length; i++) {
     eggs[i].y += eggs[i].speed;
@@ -208,15 +227,18 @@ function update(delta) {
       score2 += 1;
     }
   }
-  if(timer2>11){
+
+  if(trans5==false){
+  if(br==false){
     goldegg.animations.play("float");
     goldegg.step(delta);
-  }if(timer2==11){
-    sfx.bird.play();
+  }
+  if(trans4==true){
     crowLPos.x += 30
-  }if(timer2<11){
+  }if(br==true){
     goldegg.animations.play("break");
     goldegg.step(delta);
+  }
   }
 
   if (!input.direction) {
@@ -358,8 +380,14 @@ function update(delta) {
   indicator.position.y += 20;
   if(boss==true){
   for (let i = 0; i < crow.length; i++) {
-    crow[i].position.y += 25;
-    crow[i].position.x += 1;
+    crow_sh.drawImage(ctx, crow[i].position.x, crow[i].position.y)
+    crow[i].position.y += 30;
+    if(crow[i].frame ==0){
+    crow[i].position.x -= 1;
+    }
+    if(crow[i].frame ==1){
+      crow[i].position.x += 1;
+      }
     // setInterval(() => {
     //   crow_sh.drawImage(ctx, crow[i].position.x, crow[i].position.y)
     // }, 100)
@@ -386,6 +414,12 @@ function update(delta) {
     else if (crow[i].position.y > RESOLUTION.y) {
       crow.splice(i, 1);
     }
+    if(afterimage==false){
+    setInterval(() => {
+
+    }, 10);
+    afterimage = true;
+  }
   }
   }
 }
@@ -393,19 +427,25 @@ function update(delta) {
 //eggs
 let eggs = [];
 
+
 function drawEggs() {
   for (let i = 0; i < eggs.length; i++) {
     eg.drawImage(ctx, eggs[i].x, eggs[i].y);
   }
 }
 
+if(boss==true){eg_int = 2000}
+
 setInterval(() => {
+  if(trans2!=true){
   eggs.push({
     x: Math.random() * (canvas.width - 20) + 10,
     y: 50,
     speed: -4
   });
-}, 800);
+}
+}, eg_int);
+
 
 //saws
 let saws = [];
@@ -451,15 +491,16 @@ function drawCrow() {
 }
 
 
+
 setInterval(() => {
   if(boss==true){
-  let chance = (d_over_dx * ((100-timer2) ** 2))
+  let chance = (d_over_dx * ((100-timer2) ** 3))
   if (Math.random() > chance) return;
   let new_crow = new Sprite({
     resource: res.images.crow,
-    frameSize: new Vector2(400, 500),
+    frameSize: new Vector2(360, 500),
     hFrames: 3,
-    position: new Vector2(Math.random() * (canvas.width - 20) + 10, -2000),
+    position: new Vector2(bunPos.x, -2000),
     vFrames: 1,
     frame: 0,
   }
@@ -469,36 +510,73 @@ setInterval(() => {
     sfx.bird.play();
   }
 }
+}, 3000);
+
+setTimeout(() => {
+  setInterval(() => {
+    if(boss==true){
+    let chance = (d_over_dx * ((100-timer2) ** 2))
+    if (Math.random() > chance) return;
+    let new_crow = new Sprite({
+      resource: res.images.crow,
+      frameSize: new Vector2(360, 500),
+      hFrames: 3,
+      position: new Vector2(bunPos.x, -2000),
+      vFrames: 1,
+      frame: 1,
+    }
+    )
+    crow.push(new_crow);
+    if(boss == true){
+      sfx.bird.play();
+    }
+  }
+  }, 3000);
 }, 1500);
 
+// var music = {
+//   menu: new Howl({
+//       src: [
+//           "sfx/game.wav"
+//       ],
+//       autoplay: true,
+//       loop: true,
+//       muted: false,
+//   })
+// }
 
-var music = {
-  menu: new Howl({
-      src: [
-          "sfx/game.wav"
-      ],
-      autoplay: true,
-      loop: true
-  })
-}
+var music = new Howl({
+  src: ['sfx/game.wav'],
+  autoplay: true,
+  loop: true,
+});
+
+var music2 = new Howl({
+  src: ['sfx/game.wav'],
+  loop: true,
+});
 
 function draw() {
-  if(timer2<90 && trans == false){
+  if(timer2<11 && trans == false){
     transition()
   }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   back.drawImage(ctx, 0, 0);
   bun.drawImage(ctx, bunPos.x, bunPos.y);
-  crow_left.drawImage(ctx, crowLPos.x, crowLPos.y);
   document.querySelector("#score2").innerText = `Eggs: ${score2}`
   drawEggs();
-  drawCrow();
   drawSaws();
   drawGold();
+  crow_left.drawImage(ctx, crowLPos.x, crowLPos.y);
+  drawCrow();
 } 
 
 setInterval(() => {
+  if(trans2==false){
   timer2 -= 1;
+  }else if(trans3 ==true){
+    timer2+= 15;
+  }
   saveHiscore()
   document.querySelector("#timer2").innerText = `Timer: ${timer2}`
 }, 1000)

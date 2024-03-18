@@ -9,6 +9,8 @@ Projekt zawiera:
     - Collect:
     Uzbieraj jak najwięcej jajek w ograniczonym czasie i zdobądź złote jajo. Uważaj na ptaki.
 
+Wszystkie assety (oprócz zdjęć w sekretnym trybie) i dzwięki (oprócz break.mp3 i bird.mp3) są oryginalne
+
 muzyka dziala lepiej w chrome
 
 Kacper T || Bartosz G
