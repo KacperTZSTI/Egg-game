@@ -13,6 +13,7 @@ const d_over_dx = 0.00019245008973;
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 const input = new Input();
+
 let facing = "LEFT";
 let z = false;
 let d = 0;
@@ -20,34 +21,41 @@ let p = false;
 let dmg = false;
 let sfx_r = 99;
 let flash = false;
+let duck = false;
 let score2 = 0;
 let hiscore = window.localStorage.getItem("hiscore")??0;
 let hiscore2 = window.localStorage.getItem("hiscore2")??0;
+let trans = false;
+let trans2 = false;
+let trans3 = false;
+let trans4 = false;
+let trans5 = false;
 let boss = false;
+let br = false;
+let afterimage = false;
+let eg_int = 800;
 document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
 
-let timer2 = 100;
+let timer2 = 11;
 const RESOLUTION = new Vector2(1200, 700)
-let duck = false;
 
 sfx.load.play();
 
+//endgame
 function saveHiscore(){
   if(score2>hiscore2){
     hiscore2 = score2;
     window.localStorage.setItem("hiscore2", score2)
     document.querySelector("#hiscore2").innerText = `High score: ${hiscore2}`
   }
-  if(timer2<10 && boss == false){
-    timer2 = 50;
-    boss = true;
-  }
+  
   if(timer2<0){
     sfx.loss.play();
     alert(`Congratulations\nyou collected ${score2} eggs.\n\n...`)
-    timer2 = 99;
+    timer2 = 20;
     window.location.assign("/")
   }
+
 }
 
 document.querySelector("#pallete").onclick = () => {
@@ -56,6 +64,8 @@ document.querySelector("#pallete").onclick = () => {
   bun.resource = p ? res.images.bun : res.images.bun2;
 }
 
+
+//objects
 const goldegg = new Sprite({
   resource: res.images.goldegg,
   frameSize: new Vector2(88, 115),
@@ -70,6 +80,17 @@ const goldegg = new Sprite({
   })
 }
 )
+
+let goldPos = new Vector2(520, 50);
+let spd = -4;
+
+function drawGold(){
+  goldegg.drawImage(ctx, goldPos.x, goldPos.y);
+  if (trans3==true){
+    goldPos.y += spd;
+    spd += 0.1;
+  }
+}
 
 const back = new Sprite({
   resource: res.images.back2,
@@ -88,7 +109,7 @@ const crow_left = new Sprite({
   frameSize: new Vector2(400, 500)
 }
 )
-let crowLPos = new Vector2(-400, -60);
+let crowLPos = new Vector2(-400, -40);
 
 const indicator = new Sprite({
   resource: res.images.indicator,
@@ -130,6 +151,7 @@ const eg = new Sprite({
 
 let bunPos = new Vector2(350, RESOLUTION.y - bun.height);
 
+//basic movement
 document.addEventListener("keydown", (e) => {
   if (e.code === "KeyZ") {
     z = true;
@@ -151,23 +173,46 @@ document.addEventListener("keyup", (e) => {
   }
 })
 
-function drawGold(){
-  if(boss==false){
-  goldegg.drawImage(ctx, 520, 50);
-  }
+//boss transition initalizer
+function transition(){
+  setTimeout(() => {
+    trans2 = true;
+    console.log("1");
+    music.fade(1, 0, 4000);
+  }, 1)
+  setTimeout(() => {
+    trans3 = true;
+    console.log("2");
+
+  }, 5000)
+  setTimeout(() => {
+    trans3 = false;
+    br = true;
+    console.log("2");
+    sfx.break.play();
+  }, 6600)
+  setTimeout(() => {
+    sfx.bird.play()
+    trans4 = true;
+    console.log("3");
+  }, 6300)
+  setTimeout(() => {
+    trans5 = true;
+    console.log("4");
+    boss = true;
+    music2.play();
+    music2.rate(1.565);
+  }, 8300)
+  setTimeout(() => {
+    trans2 = false;
+    trans4 = false;
+    console.log("5");
+  }, 15000)
+  trans = true;
 }
 
 function update(delta) {
-  if(timer2>11){
-    goldegg.animations.play("float");
-    goldegg.step(delta);
-  }if(timer2==11){
-    sfx.bird.play();
-    crowLPos.x += 30
-  }if(timer2<11){
-    goldegg.animations.play("break");
-    goldegg.step(delta);
-  }
+
   if (!z && !input.heldDirections.length) d = 0;
   for (let i = 0; i < eggs.length; i++) {
     eggs[i].y += eggs[i].speed;
@@ -182,82 +227,20 @@ function update(delta) {
       score2 += 1;
     }
   }
-  for (let i = 0; i < saws.length; i++) {
-    saws[i].position.y += saws[i].speed;
-    saws[i].speed += 0.15;
-    saws[i].animations.play("spin");
-    saws[i].step(delta);
-    if (
-      saws[i].position.x >= bunPos.x - 60 && saws[i].position.y >= bunPos.y - 60 && saws[i].position.x <= bunPos.x + 80 && saws[i].position.y <= bunPos.y + 100
-    ) {
-      sfx_r = Math.random()
-      if(sfx_r < 0.25){
-        sfx.saw1.play();
-      }
-      if(sfx_r > 0.25 && sfx_r < 0.5){
-        sfx.saw2.play();
-      }
-      if(sfx_r > 0.5 && sfx_r < 0.75){
-        sfx.saw3.play();
-      }
-      if(sfx_r > 0.75){
-        sfx.saw4.play();
-      }
-      saws.splice(i, 1);
-      dmg = true;
-      saveHiscore();
-      score2 -= 3;
-    }
-    else if (saws[i].position.y > RESOLUTION.y && saws[i].bounced) {
-      saws.splice(i, 1);
-    }
-    else if (saws[i].position.y > RESOLUTION.y && !saws[i].bounced) {
-      let sfx_b = Math.random();
-      if(sfx_b > 0.994){
-        sfx.funi.play();
-      }else{
-        sfx.bounce.play();
-      }
-      saws[i].speed = -10;
-      saws[i].bounced = true;
-      saws[i].position.y = RESOLUTION.y - 1;
-    }
+
+  if(trans5==false){
+  if(br==false){
+    goldegg.animations.play("float");
+    goldegg.step(delta);
+  }
+  if(trans4==true){
+    crowLPos.x += 30
+  }if(br==true){
+    goldegg.animations.play("break");
+    goldegg.step(delta);
+  }
   }
 
-  indicator.position.y += 20;
-  //crow
-  if(boss==true){
-  for (let i = 0; i < crow.length; i++) {
-    crow[i].position.y += 25;
-    crow[i].position.x += 1;
-    // setInterval(() => {
-    //   crow_sh.drawImage(ctx, crow[i].position.x, crow[i].position.y)
-    // }, 100)
-    if (
-      crow[i].position.x >= bunPos.x - 300 && crow[i].position.y >= bunPos.y - 60 && crow[i].position.x <= bunPos.x + 10 && crow[i].position.y <= bunPos.y + 100
-    ) {
-      sfx_r = Math.random()
-      if(sfx_r < 0.25){
-        sfx.saw1.play();
-      }
-      if(sfx_r > 0.25 && sfx_r < 0.5){
-        sfx.saw2.play();
-      }
-      if(sfx_r > 0.5 && sfx_r < 0.75){
-        sfx.saw3.play();
-      }
-      if(sfx_r > 0.75){
-        sfx.saw4.play();
-      }
-      dmg = true;
-      saveHiscore();
-      score2 -= 2;
-    }
-    else if (crow[i].position.y > RESOLUTION.y) {
-      crow.splice(i, 1);
-    }
-  }
-  }
   if (!input.direction) {
     if (facing == "LEFT") { bun.animations.play("idle_l") }
     if (facing == "RIGHT") { bun.animations.play("idle_r") }
@@ -350,10 +333,100 @@ function update(delta) {
   }
   facing = input.direction ?? facing;
   bun.step(delta);
+  
+  //hazards
+  for (let i = 0; i < saws.length; i++) {
+    saws[i].position.y += saws[i].speed;
+    saws[i].speed += 0.15;
+    saws[i].animations.play("spin");
+    saws[i].step(delta);
+    if (
+      saws[i].position.x >= bunPos.x - 60 && saws[i].position.y >= bunPos.y - 60 && saws[i].position.x <= bunPos.x + 80 && saws[i].position.y <= bunPos.y + 100
+    ) {
+      sfx_r = Math.random()
+      if(sfx_r < 0.25){
+        sfx.saw1.play();
+      }
+      if(sfx_r > 0.25 && sfx_r < 0.5){
+        sfx.saw2.play();
+      }
+      if(sfx_r > 0.5 && sfx_r < 0.75){
+        sfx.saw3.play();
+      }
+      if(sfx_r > 0.75){
+        sfx.saw4.play();
+      }
+      saws.splice(i, 1);
+      dmg = true;
+      saveHiscore();
+      score2 -= 3;
+    }
+    else if (saws[i].position.y > RESOLUTION.y && saws[i].bounced) {
+      saws.splice(i, 1);
+    }
+    else if (saws[i].position.y > RESOLUTION.y && !saws[i].bounced) {
+      let sfx_b = Math.random();
+      if(sfx_b > 0.994){
+        sfx.funi.play();
+      }else{
+        sfx.bounce.play();
+      }
+      saws[i].speed = -10;
+      saws[i].bounced = true;
+      saws[i].position.y = RESOLUTION.y - 1;
+    }
+  }
+  //crow
+  indicator.position.y += 20;
+  if(boss==true){
+  for (let i = 0; i < crow.length; i++) {
+    crow_sh.drawImage(ctx, crow[i].position.x, crow[i].position.y)
+    crow[i].position.y += 30;
+    if(crow[i].frame ==0){
+    crow[i].position.x -= 1;
+    }
+    if(crow[i].frame ==1){
+      crow[i].position.x += 1;
+      }
+    // setInterval(() => {
+    //   crow_sh.drawImage(ctx, crow[i].position.x, crow[i].position.y)
+    // }, 100)
+    if (
+      crow[i].position.x >= bunPos.x - 300 && crow[i].position.y >= bunPos.y - 60 && crow[i].position.x <= bunPos.x + 10 && crow[i].position.y <= bunPos.y + 100
+    ) {
+      sfx_r = Math.random()
+      if(sfx_r < 0.25){
+        sfx.saw1.play();
+      }
+      if(sfx_r > 0.25 && sfx_r < 0.5){
+        sfx.saw2.play();
+      }
+      if(sfx_r > 0.5 && sfx_r < 0.75){
+        sfx.saw3.play();
+      }
+      if(sfx_r > 0.75){
+        sfx.saw4.play();
+      }
+      dmg = true;
+      saveHiscore();
+      score2 -= 2;
+    }
+    else if (crow[i].position.y > RESOLUTION.y) {
+      crow.splice(i, 1);
+    }
+    if(afterimage==false){
+    setInterval(() => {
+
+    }, 10);
+    afterimage = true;
+  }
+  }
+  }
 }
 
 //eggs
 let eggs = [];
+
 
 function drawEggs() {
   for (let i = 0; i < eggs.length; i++) {
@@ -361,13 +434,18 @@ function drawEggs() {
   }
 }
 
+if(boss==true){eg_int = 2000}
+
 setInterval(() => {
+  if(trans2!=true){
   eggs.push({
     x: Math.random() * (canvas.width - 20) + 10,
     y: 50,
     speed: -4
   });
-}, 800);
+}
+}, eg_int);
+
 
 //saws
 let saws = [];
@@ -397,12 +475,12 @@ setInterval(() => {
   new_saw.speed = -5;
   new_saw.bounced = (Math.random() > 0.6)
   new_saw.animations.play("spin")
-  if(boss==false){
+  if(trans==false){
   saws.push(new_saw);
 }
 }, 50);
 
-
+//boss
 let crow = [];
 
 function drawCrow() {
@@ -413,15 +491,16 @@ function drawCrow() {
 }
 
 
+
 setInterval(() => {
   if(boss==true){
-  let chance = (d_over_dx * ((100-timer2) ** 2))
+  let chance = (d_over_dx * ((100-timer2) ** 3))
   if (Math.random() > chance) return;
   let new_crow = new Sprite({
     resource: res.images.crow,
-    frameSize: new Vector2(400, 500),
+    frameSize: new Vector2(360, 500),
     hFrames: 3,
-    position: new Vector2(Math.random() * (canvas.width - 20) + 10, -2000),
+    position: new Vector2(bunPos.x, -2000),
     vFrames: 1,
     frame: 0,
   }
@@ -431,33 +510,73 @@ setInterval(() => {
     sfx.bird.play();
   }
 }
+}, 3000);
+
+setTimeout(() => {
+  setInterval(() => {
+    if(boss==true){
+    let chance = (d_over_dx * ((100-timer2) ** 2))
+    if (Math.random() > chance) return;
+    let new_crow = new Sprite({
+      resource: res.images.crow,
+      frameSize: new Vector2(360, 500),
+      hFrames: 3,
+      position: new Vector2(bunPos.x, -2000),
+      vFrames: 1,
+      frame: 1,
+    }
+    )
+    crow.push(new_crow);
+    if(boss == true){
+      sfx.bird.play();
+    }
+  }
+  }, 3000);
 }, 1500);
 
+// var music = {
+//   menu: new Howl({
+//       src: [
+//           "sfx/game.wav"
+//       ],
+//       autoplay: true,
+//       loop: true,
+//       muted: false,
+//   })
+// }
 
-var music = {
-  menu: new Howl({
-      src: [
-          "sfx/game.wav"
-      ],
-      autoplay: true,
-      loop: true
-  })
-}
+var music = new Howl({
+  src: ['sfx/game.wav'],
+  autoplay: true,
+  loop: true,
+});
+
+var music2 = new Howl({
+  src: ['sfx/game.wav'],
+  loop: true,
+});
 
 function draw() {
+  if(timer2<11 && trans == false){
+    transition()
+  }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   back.drawImage(ctx, 0, 0);
   bun.drawImage(ctx, bunPos.x, bunPos.y);
-  crow_left.drawImage(ctx, crowLPos.x, crowLPos.y);
   document.querySelector("#score2").innerText = `Eggs: ${score2}`
   drawEggs();
-  drawCrow();
   drawSaws();
   drawGold();
+  crow_left.drawImage(ctx, crowLPos.x, crowLPos.y);
+  drawCrow();
 } 
 
 setInterval(() => {
+  if(trans2==false){
   timer2 -= 1;
+  }else if(trans3 ==true){
+    timer2+= 15;
+  }
   saveHiscore()
   document.querySelector("#timer2").innerText = `Timer: ${timer2}`
 }, 1000)
