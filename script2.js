@@ -500,7 +500,7 @@ setInterval(() => {
     resource: res.images.crow,
     frameSize: new Vector2(360, 500),
     hFrames: 3,
-    position: new Vector2(bunPos.x, -2000),
+    position: new Vector2(bunPos.x-20, -2000),
     vFrames: 1,
     frame: 0,
   }
@@ -521,7 +521,7 @@ setTimeout(() => {
       resource: res.images.crow,
       frameSize: new Vector2(360, 500),
       hFrames: 3,
-      position: new Vector2(bunPos.x, -2000),
+      position: new Vector2(bunPos.x+20, -2000),
       vFrames: 1,
       frame: 1,
     }
