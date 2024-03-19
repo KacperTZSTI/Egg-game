@@ -44,7 +44,7 @@ function saveHiscore(){
     score = 99;
     window.location.assign("/")
   }
-  if(timer == 250){
+  if(timer == 260){
     alert(`just die`)
     d_over_dx = 0.0002;
   }
@@ -55,7 +55,7 @@ function saveHiscore(){
     alert(`An unexpected error has occured\nyour browser needs to restart \n\n406 Not Acceptable`)
     window.location.assign("/error.html")
   }
-  if(timer > 120 && lastHiscore > 250){
+  if(timer > 120 && lastHiscore > 260){
     sfx.saw1.play();
     sfx.saw1.play();
     sfx.saw1.play();
