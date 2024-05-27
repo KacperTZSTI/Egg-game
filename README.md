@@ -1,16 +1,25 @@
-Projekt zawiera:
-- Możwilość pozuszania się w lewo i prawo po naciśnięciu strzalek
-- Chwilowe zwiększenie prędkości po przytrzymaniu klawisza z
-- Jajka które można łapać
-- Piły które trzeba omijać
-- Dwa tryby:
-    - Survival:
-    Jajka to twoje hp. Uzbieraj jak najwięcej i przeżyj deszcz pił (i laserów)
-    - Collect:
-    Uzbieraj jak najwięcej jajek w ograniczonym czasie i zdobądź złote jajo. Uważaj na ptaki.
+# Features:
+- move left or right using arrows
+- dash by pressing `<Z>` to temporarily increase speed
+- catch eggs falling from the sky
+- evade the obstacles falling from the sky
+- two modes available:
+    - survival mode:
+        - eggs cover your HP
+        - collect as much as you can and survive the rain of saws (and lasers)
+    - collect mode
+        - collect as much eggs as you can
+        - find *the golden egg*
+        - watch out for *the bird*
 
-Wszystkie assety (oprócz zdjęć w sekretnym trybie) i dzwięki (oprócz break.mp3 i bird.mp3) są oryginalne
 
-muzyka dziala lepiej w chrome
+# Copyright
+All assets (except for phots in the `secret mode`) and all sounds (except for `break.mp3` and `bird.mp3`) are original and made by @KacperTZSTI
 
-Kacper T || Bartosz G
+
+###### music works better in Chrome
+
+
+# Authors
+@KacperTZSTI
+@1p22geo
